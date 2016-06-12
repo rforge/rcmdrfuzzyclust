@@ -1,0 +1,2 @@
+#   type    menu/item      operation/parent  label             command/menu                activation  install?
+    item    clusterMenu    command	"Fuzzy Clustering..."	pluginInput	"activeDataSetP()"	"packageAvailable('RcmdrPlugin.Fuzzcluster')"
