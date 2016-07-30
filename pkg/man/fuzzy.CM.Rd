@@ -4,7 +4,8 @@
 \alias{fuzzy.CM}
 \title{Fuzzy C-Means}
 \usage{
-fuzzy.CM(X, K, m, max.iteration, threshold, RandomNumber)
+fuzzy.CM(X, K = 2, m = 2, max.iteration = 100, threshold = 10^-5,
+  RandomNumber = 0)
 }
 \arguments{
 \item{X}{data frame n x p}

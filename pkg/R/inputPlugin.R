@@ -4,7 +4,6 @@
 #' This Plugin provide Interface to select variables of dataset that will be
 #' used for Fuzzy Clustering, methods selection, and parameter specification
 #' @export
-#'
 
 pluginInput<-function(){
   require(tcltk2)
@@ -29,7 +28,7 @@ pluginInput<-function(){
   #--WINDOWS-----------------#
   win <-tktoplevel(background="white")
 
-  win1 <- tk2frame(win,relief="flat",width=470,heigh=345)
+  win1 <- tk2frame(win,relief="flat",width=470,height=365)
   tkgrid(win1)
   tkgrid.propagate(win1,F)
   fontTitle<- tkfont.create(family = "Gentium Book Basic", size = 13,
@@ -106,7 +105,7 @@ pluginInput<-function(){
   win1$frame2<-tk2frame(win1,borderwidth=2,relief="flat")
   tkgrid(win1$frame2,padx=0,pady=c(0,0),row=2,column=0,sticky="w")
   fuzz.method <- c("Fuzzy C-Means",
-                   "Gustafson Kessel","Gustafson Kessel - Improved")
+                   "Gustafson Kessel")
   win1$method <-
     tk2combobox(win1$frame2,width = 30,values = fuzz.method)
   nCluster <- tk2spinbox(win1$frame2,width = 5,value = c(2:nrow(data)))
@@ -116,71 +115,12 @@ pluginInput<-function(){
       win1$frame2,width = 5,value = mf
     )
   gamma.param<- tk2spinbox(win1$frame2,width=5,value=seq(0,1,by=.1))
-  more.param<-c(1000,10^-5,0)
-  more.Dialog <- function(parent,returnValOnCancel = c(1000,10^-5,0)) {
-    dlg <- tktoplevel(background="white")
-    tktitle(dlg)<-"More Parameter"
-    tkwm.deiconify(dlg)
-    tkgrab.set(dlg)
-    tkfocus(dlg)
-    returnVal<-returnValOnCancel
-    dlg$frame<-tk2frame(dlg,borderwidth=2,relief="flat")
-    tkgrid(dlg$frame)
-    MaxIterVal <- tclVar(returnVal[1])
-    MaxIterEntry <- tk2entry(dlg$frame, width = 8,
-                             textvariable = MaxIterVal)
-    tkgrid(tklabel(dlg$frame, text = "Max iteration:",
-                   font=fontCommands,background="white"),
-           MaxIterEntry, padx = 10, pady = 5,sticky="w")
-
-    ThresholdVal <- tclVar(returnVal[2])
-    ThresholdEntry <- tk2entry(dlg$frame, width = 8,
-                               textvariable = ThresholdVal)
-    tkgrid(tklabel(dlg$frame, text = "Threshold:",
-                   font=fontCommands,background="white"),
-           ThresholdEntry, padx = 10, pady = 5,sticky="w")
-
-    SeedVal <- tclVar(returnVal[3])
-    SeedEntry <- tk2entry(dlg$frame, width = 8,
-                          textvariable = SeedVal)
-    tkgrid(tklabel(dlg$frame, text = "Seed:",
-                   font=fontCommands,background="white"),
-           SeedEntry, padx = 10, pady = 5,sticky="w")
-
-    onOK <- function() {
-      returnVal[1] <<- tclvalue(MaxIterVal)
-      returnVal[2] <<- tclvalue(ThresholdVal)
-      returnVal[3] <<- tclvalue(SeedVal)
-      tkgrab.release(dlg)
-      tkdestroy(dlg)
-      tkfocus(parent)
-    }
-    onCancel <- function() {
-      returnVal <<- returnValOnCancel
-      tkgrab.release(dlg)
-      tkdestroy(dlg)
-      tkfocus(parent)
-    }
-    butOK <- tk2button(dlg$frame, text = "OK", width = -6, command = onOK)
-    butCancel <- tk2button(dlg$frame, text = "Cancel", width = -6, command = onCancel)
-    tkgrid(butCancel, butOK, padx = 10, pady = c(0, 15))
-    tkfocus(dlg)
-    tkbind(dlg, "<Destroy>", function() {tkgrab.release(dlg); tkfocus(parent)})
-    tkbind(MaxIterEntry, "<Return>", onOK)
-    tkbind(ThresholdEntry, "<Return>", onOK)
-    tkbind(SeedEntry, "<Return>", onOK)
-    tkwait.window(dlg)
-    returnVal
-  }
-
-  win1$moreDialog <- function() {
-    more.param<<- more.Dialog(win1)
-    print(more.param)
-  }
-  win1$moreButton<- tk2button(win1$frame2, text = "More Setting...",
-                              width=18,
-                              command = win1$moreDialog)
-
+  SeedVal <- tclVar("0")
+  SeedEntry <- tk2entry(win1$frame2, width = 5,
+                        textvariable = SeedVal)
+  ensemble.cek.value<-tclVar("0")
+  ensemble.cek<-tk2checkbutton(win1$frame2,variable=ensemble.cek.value)
+  n.ensemble<- tk2spinbox(win1$frame2,width=5,value=seq(10,100,by=10))
   tkgrid(
     tk2label(
       win1$frame2, text = "N Cluster:", justify = "left",
@@ -203,15 +143,30 @@ pluginInput<-function(){
       win1$frame2, text = "Method:", justify = "left",
       font=fontCommands
     ),
-    win1$method,win1$moreButton,
-
+    win1$method,
     padx = 10,pady = c(5,5),sticky="w"
   )
+  tkgrid(
+    tk2label(
+      win1$frame2, text = "Seed:", justify = "left",
+      font=fontCommands
+    ),
+    padx = 10,pady = c(5,5),sticky="w",
+    row=1,column=4
+  )
+  tkgrid(
+    SeedEntry,row=1,column=5,padx = 10,pady = c(5,5),sticky="w"
+
+  )
+  tkgrid(tk2label(
+    win1$frame2,text="Ensemble",justify="left", font=fontCommands
+  ),ensemble.cek,
+  tk2label(win1$frame2,text="N ensemble:",justify="left",font=fontCommands),
+  n.ensemble,
+  padx=10,pady=c(5,5),sticky="W"
+  )
   method <- tclVar("Fuzzy C-Means")
-
   tkgrid.configure(win1$method,columnspan=3)
-  tkgrid.configure(win1$moreButton,columnspan=2,column=4)
-
   tkconfigure(win1$method, textvariable = method)
   method.nCluster <- tclVar("2")
   tkconfigure(nCluster, textvariable = method.nCluster)
@@ -219,14 +174,27 @@ pluginInput<-function(){
   tkconfigure(fuzzifier.param, textvariable = method.fuzzifier)
   gamma.value<-tclVar("0")
   tkconfigure(gamma.param,textvariable=gamma.value)
+  ensemble.seed<-tclVar("10")
+  tkconfigure(n.ensemble,textvariable=ensemble.seed)
+
   tk2state.set(gamma.param,"disabled")
   OnImprove<-function(){
-    if(tclvalue(method)=="Gustafson Kessel - Improved")
+    if(tclvalue(method)=="Gustafson Kessel")
       tk2state.set(gamma.param,"normal")
     else
       tk2state.set(gamma.param,"disabled")
   }
   tkbind(win1$method,"<Button 1>",OnImprove)
+  tk2state.set(n.ensemble,"disable")
+  onCek<-function(){
+    if(tclvalue(ensemble.cek.value)=="0")
+    { tk2state.set(n.ensemble,"normal")
+      }else{
+      tk2state.set(n.ensemble,"disable")
+    }
+  }
+  tkbind(ensemble.cek,"<Button 1>",onCek)
+
   win1$frame3<-tk2frame(win1,borderwidth=2,relief="flat")
   tkgrid(win1$frame3,padx=0,pady=c(0,0),row=3,column=0,sticky="w")
   nextButton<-tk2button(win1$frame3,text="Go>>",width="10")
@@ -245,7 +213,7 @@ pluginInput<-function(){
   on.next<-function(){
     tcl("update")
     for(i in var.choice)
-        data.cluster<<-cbind.data.frame(data.cluster,eval(parse(text=paste("data$",i,sep=""))))
+      data.cluster<<-cbind.data.frame(data.cluster,eval(parse(text=paste("data$",i,sep=""))))
     data.cluster<<-data.cluster[,-1]
     colnames(data.cluster)<<-var.choice
     rownames(data.cluster)<<-rownames(data)
@@ -253,28 +221,37 @@ pluginInput<-function(){
     tkconfigure(statuslabel,text="STATUS: PROCESS CLUSTERING....")
     tcl("update")
     Sys.sleep(.5)
-    if(tclvalue(method)=="Fuzzy C-Means")
-          cluster<<-fuzzy.CM(data.cluster,
-                             K=as.numeric(tclvalue(method.nCluster)),
-                             m=as.numeric(tclvalue(method.fuzzifier)),
-                             max.iteration=as.numeric(more.param[1]),
-                             threshold=as.numeric(more.param[2]),
-                             RandomNumber=as.numeric(more.param[3]))
-    else if(tclValue(method)=="Gustafson Kessel")
-          cluster<<-fuzzy.GK(data.cluster,K=as.numeric(tclvalue(method.nCluster)),
-                             m=as.numeric(tclvalue(method.fuzzifier)),
-                             max.iteration=as.numeric(more.param[1]),
-                             threshold=as.numeric(more.param[2]),
-                             RandomNumber=as.numeric(more.param[3]))
+    if(tclvalue(ensemble.cek.value)=="0")
+    {if(tclvalue(method)=="Fuzzy C-Means")
+      cluster<<-fuzzy.CM(data.cluster,
+                         K=as.numeric(tclvalue(method.nCluster)),
+                         m=as.numeric(tclvalue(method.fuzzifier)),
+                         RandomNumber=as.numeric(tclvalue(SeedVal)))
     else
-          cluster<<-fuzzy.GK.Imp(K=as.numeric(tclvalue(method.nCluster)),
-                                 m=as.numeric(tclvalue(method.fuzzifier)),
-                                 max.iteration=as.numeric(more.param[1]),
-                                 threshold=as.numeric(more.param[2]),
-                                 RandomNumber=as.numeric(more.param[3]),
-                                 gamma=as.numeric(tclValue(gamma.value))
+      cluster<<-fuzzy.GK(data.cluster,
+                         K=as.numeric(tclvalue(method.nCluster)),
+                         m=as.numeric(tclvalue(method.fuzzifier)),
+                         RandomNumber=as.numeric(tclvalue(SeedVal)),
+                         gamma=as.numeric(tclvalue(gamma.value))
 
-          )
+      )}else{
+        if(tclvalue(method)=="Fuzzy C-Means"){
+            cluster<<-soft.vote.ensemble(data = data.cluster,
+                                         seed=as.numeric(tclvalue(ensemble.seed)),
+                                         method = "FCM",
+                                         K=as.numeric(tclvalue(method.nCluster)),
+                                         m=as.numeric(tclvalue(method.fuzzifier)))
+        }else {
+            cluster<<-soft.vote.ensemble(data = data.cluster,
+                                         seed=as.numeric(tclvalue(ensemble.seed)),
+                                         method = "GK",
+                                         K=as.numeric(tclvalue(method.nCluster)),
+                                         m=as.numeric(tclvalue(method.fuzzifier)),
+                                         gamma=as.numeric(tclvalue(gamma.value)))
+
+        }
+      }
+
     tkconfigure(pb,value=60)
     tkconfigure(statuslabel,text="STATUS: VALIDATING...")
     tcl("update")
@@ -283,19 +260,19 @@ pluginInput<-function(){
     tkconfigure(pb,value=80)
     tcl("update")
     Sys.sleep(.5)
-    manov<<-checkManova(cluster)
+    manov<<-try(checkManova(cluster),silent = T)
     tkconfigure(pb,value=90)
     tkconfigure(statuslabel,text="STATUS: PREPARING RESULT...")
     tcl("update")
     Sys.sleep(.5)
-    doItAndPrint(cluster)
-    doItAndPrint(validation)
     tkconfigure(pb,value=100)
     tkconfigure(statuslabel,text="STATUS: FINISH :)")
     tcl("update")
     print("FINISH")
-    result.GUI(win1,cluster,valid,manov,tclvalue(method))
-    }
+    if(tclvalue(ensemble.cek.value)!="0")
+      methods=paste(tclvalue(method),"with Soft Voting Cluster Ensemble") else methods=tclvalue(method)
+    result.GUI(win,cluster,valid,manov,methods)
+  }
   tcl("ttk::style", "configure", "TFrame", background="white")
   tcl("ttk::style", "configure", "TLabel", background="white")
   tcl("ttk::style", "configure", "TButton",font=fontCommands)
@@ -304,6 +281,6 @@ pluginInput<-function(){
 
   tcl("ttk::style", "configure","TPanedwindow", background="white")
   tcl("ttk::style", "configure","TProgressbar", troughcolor="blue")
-
+  tkconfigure(nextButton,command=on.next)
   tkfocus(win1)
 }

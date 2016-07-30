@@ -1,4 +1,4 @@
-#' Gustafson Kessel
+#' Gustafson Kessel Improved Covariance Estimation
 #'
 #' @description This function used to perform Gustafson Kessel Clustering of X dataset.
 #'
@@ -8,14 +8,16 @@
 #' @param max.iteration maximum iteration to convergence
 #' @param threshold threshold of convergence
 #' @param RandomNumber specific seed
-#' @param rho vector of cluster volume (actually Gustafson-Kessel recommend rep(1,K))
+#' @param Gamma tuning parameter of covariance
+#'
 #' @return func.obj objective function that calculated.
 #' @return U matrix n x K consist fuzzy membership matrix
 #' @return V matrix K x p consist fuzzy centroid
 #' @return D matrix n x K consist distance of data to centroid that calculated
 #' @return Clust.desc cluster description (dataset with additional column of cluster label)
 #'
-#' @details This function perform Fuzzy C-Means algorithm by Gustafson Kessel (1968).
+#'
+#' @details This function perform Fuzzy C-Means algorithm by Gustafson Kessel (1968) that improved by Babuska et al (2002).
 #' Gustafson Kessel (GK) is one of fuzzy clustering methods to clustering dataset
 #' become K cluster. Number of cluster (K) must be greater than 1. To control the overlaping
 #' or fuzziness of clustering, parameter m must be specified.
@@ -26,21 +28,22 @@
 #' Centroid or cluster center can be use to interpret the cluster. Both membership and centroid produced by
 #' calculating mathematical distance. Fuzzy C-Means calculate distance with Covariance Cluster norm distance. So it can be said that cluster
 #' will have both sperichal and elipsodial shape of geometry.
+#' @details Babuska improve the covariance estimation via tuning covariance cluster
+#' with covariance of data. Tuning parameter determine proportion of covariance data and covariance cluster
+#' that will be used to estimate new covariance cluster. Beside improving via tuning, Basbuka improve
+#' the algorithm with decomposition of covariance so it will become non singular matrix.
 #'
 #' @export
-
-fuzzy.GK<-function(X,...) UseMethod("fuzzy.GK")
-
-fuzzy.GK.default <- function(X,K=2,m=1.5,max.iteration=1000,
-                     threshold=10^-5,RandomNumber=0,rho=rep(1,K)) {
-  ## Set data
+fuzzy.GK<-function(X,K=2,m=1.5,max.iteration=100,
+                         threshold=10^-5,RandomNumber=0,rho=rep(1,K),
+                         gamma=0) {
   library(MASS)
   data.X <- as.matrix(X)
   n <- nrow(data.X)
   p <- ncol(data.X)
   ##Initiation Parameter##
   if (
-      (K <= 1) || !(is.numeric(K)) || (K %% ceiling(K) > 0))
+    (K <= 1) || !(is.numeric(K)) || (K %% ceiling(K) > 0))
     K = 2
   if ( (m <= 1) || !(is.numeric(m)))
     m = 2
@@ -48,6 +51,8 @@ fuzzy.GK.default <- function(X,K=2,m=1.5,max.iteration=1000,
     set.seed(RandomNumber)
   if(length(rho)!=K)
     rho = rep(1,K)
+  if(gamma<0||gamma>1)
+    gamma=0
 
   ## Membership Matrix U (n x K)
   U <- matrix(runif(n * K,0,1),n,K)
@@ -71,6 +76,8 @@ fuzzy.GK.default <- function(X,K=2,m=1.5,max.iteration=1000,
          (iteration < max.iteration))
   {
     U.old <- U
+    V.old<-V
+    D.old<-D
     ## Calculate Centroid
     V <- t(U ^ m) %*% data.X / colSums(U ^ m)
     for (k in 1:K)
@@ -79,27 +86,42 @@ fuzzy.GK.default <- function(X,K=2,m=1.5,max.iteration=1000,
       F.bantu <- F[,,k]
       for (i in 1:n)
       {
-          F.bantu = (U[i,k] ^ m) * (data.X[i,] - V[k,]) %*%
+        F.bantu = (U[i,k] ^ m) * (data.X[i,] - V[k,]) %*%
           t((data.X[i,] - V[k,]))+F.bantu
       }
       F.bantu = F.bantu / sum(U[,k] ^ m)
+      F.bantu = (1 - gamma) * F.bantu + (gamma * (det(cov(data.X))) ^ (1 / p)) * diag(p)
+      if (kappa(F.bantu) > 10 ^ 15)
+      {
+        eig <- eigen(F.bantu)
+        eig.values <- eig$values
+        eig.vec <- eig$vectors
+        eig.val.max <- max(eig.values)
+        eig.values[eig.values*(10^15)<eig.val.max]=eig.val.max/(10^15)
+        F.bantu = eig.vec %*% diag(eig.values) %*% solve(eig.vec)
+      }
       detMat= det(F.bantu)
       #Distance calculation
       for (i in 1:n)
       {
         D[i,k] = t(data.X[i,] - V[k,]) %*% (
-          (rho[k] * (detMat ^ (1 / p)))*ginv(F.bantu)) %*%
+          (rho[k] * (detMat ^ (1 / p)))*ginv(F.bantu,tol=0)) %*%
           (data.X[i,] -V[k,])
       }
     }
-    D<-(D+10^-10)
     ##FUZZY PARTITION MATRIX
-      for (i in 1:n)
-      {
-          U[i,] <- 1 /
-            (((D[i,]) ^ (1 / (m - 1))) *
-               sum((1 / (D[i,])) ^ (1 /(m - 1))))
-      }
+    for (i in 1:n)
+    {
+      U[i,] <- 1 /
+        (((D[i,]) ^ (1 / (m - 1))) *
+           sum((1 / (D[i,])) ^ (1 /(m - 1))))
+    }
+    if(any(is.na(U))==T||any(is.infinite(U))==T)
+    {
+      U<-U.old
+      V<-V.old
+      D<-D.old
+    }
     for (i in 1:n)
       for (k in 1:K) {
         if (U[i,k] < 0)
@@ -143,19 +165,7 @@ fuzzy.GK.default <- function(X,K=2,m=1.5,max.iteration=1000,
   result$m <- m
   result$call<-match.call()
   result$Clust.desc <- Clust.desc
-  class(result)<-"fuzzy.gk"
+  class(result)<-"fuzzyclust"
   result
   return(result)
-
-}
-print.fuzzy.gk<-function(x,..){
-  cat("Call:\n")
-  print(x$call)
-  cat("\nObjective Function:",x$func.obj)
-  cat("\nfuzzifier:",x$m)
-  cat("\nCentroid:\n")
-  print(x$V)
-  cat("\nCluster Label:\n")
-  print(x$Clust.desc[,ncol(x$Clust.desc)])
-  cat("\nOther result available: U V D")
 }

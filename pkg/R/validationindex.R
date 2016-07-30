@@ -15,8 +15,7 @@
 #' @details The best cluster result can be decided with minimum value of index.
 #'
 #' @export
-validation.index<-function(cluster) UseMethod("validation.index")
-validation.index.default<-function(cluster){
+validation.index<-function(cluster){
   n<-nrow(cluster$Clust.desc)
   p<-ncol(cluster$Clust.desc)
   data.X<-cluster$Clust.desc[,1:p-1]
@@ -50,7 +49,22 @@ validation.index.default<-function(cluster){
       XB.index<-sum(XB.temp1)/(XB.min*n)
   },silent=T)
 
-  #Kwon Index
+  #S Index
+  S.index<-10^10
+  try({
+    S.temp1<-matrix(0,n,K)
+    for(i in 1:n)
+      for(k in 1:K)
+        S.temp1[i,k]<-D[i,k]*(U[i,k]^2)
+
+      S.temp2<-matrix(0,K,K)
+      for(k1 in 1:K)
+        for(k2 in 1:K)
+          S.temp2[k1,k2]<-t(V[k1,]-V[k2,])%*%(V[k1,]-V[k2,])
+      S.min<-min(S.temp2[lower.tri(S.temp2)])
+      S.index<-sum(S.temp1)/(S.min*n)
+  },silent=T)
+  #Kwon
   K.index<-10^10
   try({
     V.bar<-colMeans(data.X)
@@ -69,23 +83,19 @@ validation.index.default<-function(cluster){
     K.index<-(K.term.1+K.term.2/K)/K.denom
   },silent=T)
 
-  validation<-list()
-  validation$MPC.index<-MPC.index
-  validation$XB.index<-XB.index
-  validation$K.index<-K.index
-  validation$CE.index<-CE.index
-  validation$call<-match.call()
+
+  validation<-c(MPC.index,CE.index,as.numeric(K.index),XB.index,S.index)
   class(validation)<-"validation"
   validation
   return(validation)
 }
+
+#' @export
 print.validation<-function(x ){
-  cat("Validation Index\n")
-  cat("Call:\n")
-  print(x$call)
-  cat("\nMPC Index\t:",x$MPC.index)
-  cat("\nCE Index\t:",x$CE.index)
-  cat("\nXB Index\t:",x$XB.index)
-  cat("\nKwon Index\t:",x$K.index)
+  cat("Validation Index")
+  cat("\nMPC Index\t:",x[1])
+  cat("\nCE Index\t:",x[2])
+  cat("\nXB Index\t:",x[4])
+  cat("\nKwon Index\t:",x[3])
 }
 

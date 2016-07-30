@@ -29,11 +29,9 @@
 #'
 #' @export
 
-fuzzy.CM<-function(X,...) UseMethod("fuzzy.CM")
-fuzzy.CM.default <- function(X,K=2,m=2,max.iteration=1000,threshold=10^-9,
+fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
                      RandomNumber=0) {
   ## Set data
-  library(MASS)
   data.X <- as.matrix(X)
   n <- nrow(data.X)
   p <- ncol(data.X)
@@ -45,8 +43,6 @@ fuzzy.CM.default <- function(X,K=2,m=2,max.iteration=1000,threshold=10^-9,
     m = 2
   if (RandomNumber > 0)
     set.seed(RandomNumber)
-  if(length(rho)!=K)
-    rho = rep(1,K)
 
   ## Membership Matrix U (n x K)
   U <- matrix(runif(n * K,0,1),n,K)
@@ -68,6 +64,8 @@ fuzzy.CM.default <- function(X,K=2,m=2,max.iteration=1000,threshold=10^-9,
          (iteration < max.iteration))
   {
     U.old <- U
+    D.old <-D
+    V.old<-V
     ## Calculate Centroid
     V <- t(U ^ m) %*% data.X / colSums(U ^ m)
     for (k in 1:K)
@@ -79,13 +77,18 @@ fuzzy.CM.default <- function(X,K=2,m=2,max.iteration=1000,threshold=10^-9,
           (data.X[i,] -V[k,])
       }
     }
-    D<-(D+10^-10)
     ##FUZZY PARTITION MATRIX
     for (i in 1:n)
     {
       U[i,] <- 1 /
         (((D[i,]+10^-10) ^ (1 / (m - 1))) *
            sum((1 / (D[i,]+10^-10)) ^ (1 /(m - 1))))
+    }
+    if(any(is.na(U))==T||any(is.infinite(U))==T)
+    {
+      U<-U.old
+      V<-V.old
+      D<-D.old
     }
     for (i in 1:n)
       for (k in 1:K) {
@@ -118,17 +121,7 @@ fuzzy.CM.default <- function(X,K=2,m=2,max.iteration=1000,threshold=10^-9,
   result$m <- m
   result$call<-match.call()
   result$Clust.desc <- Clust.desc
-  class(result)<-"fuzzy.cm"
+  class(result)<-"fuzzyclust"
+  result
   return(result)
-}
-print.fuzzy.cm<-function(x,..){
-  cat("Call:\n")
-  print(x$call)
-  cat("\nObjective Function:",x$func.obj)
-  cat("\nfuzzifier:",x$m)
-  cat("\nCentroid:\n")
-  print(x$V)
-  cat("\nCluster Label:\n")
-  print(x$Clust.desc[,ncol(x$Clust.desc)])
-  cat("\nOther result available: U V D")
 }

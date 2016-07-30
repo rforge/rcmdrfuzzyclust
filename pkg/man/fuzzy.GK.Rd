@@ -2,9 +2,10 @@
 % Please edit documentation in R/gustafsonKessel.R
 \name{fuzzy.GK}
 \alias{fuzzy.GK}
-\title{Gustafson Kessel}
+\title{Gustafson Kessel Improved Covariance Estimation}
 \usage{
-fuzzy.GK(X, K, m, max.iteration, threshold, RandomNumber)
+fuzzy.GK(X, K = 2, m = 1.5, max.iteration = 100, threshold = 10^-5,
+  RandomNumber = 0, rho = rep(1, K), gamma = 0)
 }
 \arguments{
 \item{X}{data frame n x p}
@@ -18,6 +19,8 @@ fuzzy.GK(X, K, m, max.iteration, threshold, RandomNumber)
 \item{threshold}{threshold of convergence}
 
 \item{RandomNumber}{specific seed}
+
+\item{Gamma}{tuning parameter of covariance}
 }
 \value{
 func.obj objective function that calculated.
@@ -34,7 +37,7 @@ Clust.desc cluster description (dataset with additional column of cluster label)
 This function used to perform Gustafson Kessel Clustering of X dataset.
 }
 \details{
-This function perform Fuzzy C-Means algorithm by Gustafson Kessel (1968).
+This function perform Fuzzy C-Means algorithm by Gustafson Kessel (1968) that improved by Babuska et al (2002).
 Gustafson Kessel (GK) is one of fuzzy clustering methods to clustering dataset
 become K cluster. Number of cluster (K) must be greater than 1. To control the overlaping
 or fuzziness of clustering, parameter m must be specified.
@@ -46,5 +49,10 @@ The greatest value of membership on data point will determine cluster label.
 Centroid or cluster center can be use to interpret the cluster. Both membership and centroid produced by
 calculating mathematical distance. Fuzzy C-Means calculate distance with Covariance Cluster norm distance. So it can be said that cluster
 will have both sperichal and elipsodial shape of geometry.
+
+Babuska improve the covariance estimation via tuning covariance cluster
+with covariance of data. Tuning parameter determine proportion of covariance data and covariance cluster
+that will be used to estimate new covariance cluster. Beside improving via tuning, Basbuka improve
+the algorithm with decomposition of covariance so it will become non singular matrix.
 }
 
