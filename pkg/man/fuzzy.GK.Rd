@@ -20,7 +20,9 @@ fuzzy.GK(X, K = 2, m = 1.5, max.iteration = 100, threshold = 10^-5,
 
 \item{RandomNumber}{specific seed}
 
-\item{Gamma}{tuning parameter of covariance}
+\item{rho}{cluster volume}
+
+\item{gamma}{tuning parameter of covariance}
 }
 \value{
 func.obj objective function that calculated.

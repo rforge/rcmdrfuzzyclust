@@ -91,11 +91,12 @@ validation.index<-function(cluster){
 }
 
 #' @export
-print.validation<-function(x ){
+print.validation<-function(x,...){
   cat("Validation Index")
   cat("\nMPC Index\t:",x[1])
   cat("\nCE Index\t:",x[2])
   cat("\nXB Index\t:",x[4])
   cat("\nKwon Index\t:",x[3])
+  NextMethod("print")
 }
 

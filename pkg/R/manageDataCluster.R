@@ -1,4 +1,3 @@
-
 #' Preparing data for clustering.
 #'
 #' @description This function used to construct data for clustering from

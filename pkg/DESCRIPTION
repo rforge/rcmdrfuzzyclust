@@ -16,9 +16,9 @@ Depends: R (>= 3.2.5), Rcmdr
 Imports:
   doParallel,
   foreach,
+  clue,
   ggplot2,
   MASS,
-  parallel,
   reshape2,
   tcltk2,
   tkrplot

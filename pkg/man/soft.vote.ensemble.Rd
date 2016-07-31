@@ -5,7 +5,7 @@
 \title{Soft Voting Cluster Ensemble}
 \usage{
 soft.vote.ensemble(data, seed, method = "FCM", K = 2, m = 2, gamma = 0,
-  rho = rep(1, K), threshold = 10^-5, maxiter = 100)
+  rho = rep(1, K), threshold = 10^-5, max.iteration = 100)
 }
 \arguments{
 \item{data}{data frame nxp}
@@ -38,6 +38,8 @@ D matrix n x K consist distance of data to centroid that calculated
 Clust.desc cluster description (dataset with additional column of cluster label)
 
 seeding list of random number that used as seeding
+
+Call call argument
 }
 \description{
 This function used to perform Soft Voting Cluster Ensemble

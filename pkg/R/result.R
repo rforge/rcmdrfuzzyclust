@@ -1,10 +1,17 @@
+#' Result GUI
+#' @description Result GUI
+#' @param parent parent window
+#' @param cluster cluster object
+#' @param valid validation index object
+#' @param manov manova object
+#' @param method method of clustering
 #' @export
+#' @import ggplot2
+#' @import reshape2
+#' @import tcltk2
+#' @import tkrplot
+#' @import Rcmdr
 result.GUI <- function(parent,cluster,valid,manov,method) {
-  require(tcltk2)
-  require(tcltk)
-  require(tkrplot)
-  require(ggplot2)
-  require(reshape2)
   result <- tktoplevel(background = "white")
   tktitle(result) <- "Result"
   fontTitle <-

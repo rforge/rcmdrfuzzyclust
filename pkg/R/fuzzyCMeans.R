@@ -28,7 +28,6 @@
 #' will have sperichal shape of geometry.
 #'
 #' @export
-
 fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
                      RandomNumber=0) {
   ## Set data

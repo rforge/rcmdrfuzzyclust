@@ -4,11 +4,9 @@
 #' This Plugin provide Interface to select variables of dataset that will be
 #' used for Fuzzy Clustering, methods selection, and parameter specification
 #' @export
-
+#' @import tcltk2
+#' @import Rcmdr
 pluginInput<-function(){
-  require(tcltk2)
-  require(tcltk)
-  require(Rcmdr)
   #--------------------------#
   #  DATASET                 #
   #--------------------------#

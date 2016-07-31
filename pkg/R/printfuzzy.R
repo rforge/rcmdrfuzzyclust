@@ -1,5 +1,5 @@
 #' @export
-print.fuzzyclust<-function(x,..){
+print.fuzzyclust<-function(x,...){
   cat("Call:\n")
   print(x$call)
   cat("\nObjective Function:",x$func.obj)
@@ -8,4 +8,5 @@ print.fuzzyclust<-function(x,..){
   print(x$V)
   cat("\nCluster Label:\n")
   print(x$Clust.desc[,ncol(x$Clust.desc)])
+  NextMethod("print")
 }

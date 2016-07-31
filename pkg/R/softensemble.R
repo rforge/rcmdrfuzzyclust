@@ -18,10 +18,15 @@
 #' @return D matrix n x K consist distance of data to centroid that calculated
 #' @return Clust.desc cluster description (dataset with additional column of cluster label)
 #' @return seeding list of random number that used as seeding
+#' @return Call call argument
 #'
 #' @details This function perform Soft Voting Cluster Ensemble algorithm
 #'
 #' @export
+#' @import clue
+#' @import foreach
+#' @import MASS
+#' @import doParallel
 soft.vote.ensemble<-function(data,
                              seed,
                              method="FCM",
@@ -30,21 +35,16 @@ soft.vote.ensemble<-function(data,
                              gamma=0,
                              rho=rep(1,K),
                              threshold=10^-5,
-                             maxiter=100)
+                             max.iteration=100)
 {
-  require(foreach)
-  require(MASS)
-  require(clue)
-  require(doParallel)
   numb.seed<-seq(1:seed)
   seeding<-sample(seq(1,100),seed)
   fuzzy.CM.parallel<-function(X,K,m,RandomNumber){
-    fuzzy.CM(X,K,m,RandomNumber = RandomNumber,threshold = threshold,max.iteration=maxiter)->clus
+    fuzzy.CM(X,K,m,RandomNumber = RandomNumber,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
   }
   fuzzy.GK.parallel<-function(X,K,m,RandomNumber,gamma){
-    fuzzy.GK(X,K,m,RandomNumber = RandomNumber,gamma=gamma,threshold = threshold,max.iteration=maxiter)->clus
-    # cat("sss")
+    fuzzy.GK(X,K,m,RandomNumber = RandomNumber,gamma=gamma,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
   }
 

@@ -8,7 +8,8 @@
 #' @param max.iteration maximum iteration to convergence
 #' @param threshold threshold of convergence
 #' @param RandomNumber specific seed
-#' @param Gamma tuning parameter of covariance
+#' @param gamma tuning parameter of covariance
+#' @param rho cluster volume
 #'
 #' @return func.obj objective function that calculated.
 #' @return U matrix n x K consist fuzzy membership matrix
@@ -33,11 +34,13 @@
 #' that will be used to estimate new covariance cluster. Beside improving via tuning, Basbuka improve
 #' the algorithm with decomposition of covariance so it will become non singular matrix.
 #'
+#'
 #' @export
+#' @import MASS
 fuzzy.GK<-function(X,K=2,m=1.5,max.iteration=100,
                          threshold=10^-5,RandomNumber=0,rho=rep(1,K),
                          gamma=0) {
-  library(MASS)
+
   data.X <- as.matrix(X)
   n <- nrow(data.X)
   p <- ncol(data.X)
