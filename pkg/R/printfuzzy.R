@@ -8,5 +8,5 @@ print.fuzzyclust<-function(x,...){
   print(x$V)
   cat("\nCluster Label:\n")
   print(x$Clust.desc[,ncol(x$Clust.desc)])
-  NextMethod("print")
+
 }

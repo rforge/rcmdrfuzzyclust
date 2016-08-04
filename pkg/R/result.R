@@ -11,23 +11,24 @@
 #' @import tcltk2
 #' @import tkrplot
 #' @import Rcmdr
+#'
 result.GUI <- function(parent,cluster,valid,manov,method) {
-  result <- tktoplevel(background = "white")
-  tktitle(result) <- "Result"
+  result <- tcltk::tktoplevel(background = "white")
+  tcltk::tktitle(result) <- "Result"
   fontTitle <-
-    tkfont.create(
+    tcltk::tkfont.create(
       family = "Gentium Book Basic", size = 13,
       weight = "bold"
     )
-  fontCommand <- tkfont.create(family = "Gentium Basic", size = 10,
+  fontCommand <- tcltk::tkfont.create(family = "Gentium Basic", size = 10,
                                weight = "bold")
-  fontLabel <- tkfont.create(
+  fontLabel <- tcltk::tkfont.create(
     family = "Gentium Basic", size = 10,
     weight = "bold",slant = "italic"
   )
   resultlabel <-
     paste("Fuzzy Clustering Analysis\nMethod:",method)
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(
       result,text = resultlabel,font =
         fontTitle
@@ -35,24 +36,24 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   )
   result$option<-tk2frame(result,borderwidth =1, relief="flat")
   result$output<-tk2frame(result,borderwidth=2,relief="solid",width=625,height=475)
-  tkgrid(result$option,
+  tcltk::tkgrid(result$option,
          pady=5,padx=5,sticky="nw")
-  tkgrid.configure(result$output,column=1,row=1,padx=5,pady=5)
-  tkgrid.propagate(result$output,F)
+  tcltk::tkgrid.configure(result$output,column=1,row=1,padx=5,pady=5)
+  tcltk::tkgrid.propagate(result$output,F)
 
   option.list <- tk2listbox(result$option, height = 8,width=30,
                             selectmode = "single",relief="solid",scroll="none")
-  tkgrid(tk2label(result$option,
+  tcltk::tkgrid(tk2label(result$option,
                   text = "Output Choices:", justify = "left",font=fontLabel),
          padx = 5, pady =c(5, 5), sticky = "w")
   result$output$panel<-tk2panedwindow(result$output,orientation = "vertical")
-  tkgrid(option.list, padx = 5, pady = c(5, 5),sticky="w")
+  tcltk::tkgrid(option.list, padx = 5, pady = c(5, 5),sticky="w")
 
   options <- c("Biplot Cluster", "Fuzzy Membership",
                "Cluster Centroid", "Validation Index & MANOVA")
   for (o in options)
-    tkinsert(option.list, "end", o)
-  tkselection.set(option.list, 0)
+    tcltk::tkinsert(option.list, "end", o)
+  tcltk::tkselection.set(option.list, 0)
 
   #----------------------------------------------------#
   #  Output. 1 Plot Biplot Cluster and Labeling        #
@@ -111,8 +112,8 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     try(fun())
     .Tcl(paste("image create Rplot", image))
     lab <- tk2label(parent, image = image)
-    tkpack.propagate(lab,F)
-    tkbind(lab, "<Destroy>", function() .Tcl(paste("image delete",
+    tcltk::tkpack.propagate(lab,F)
+    tcltk::tkbind(lab, "<Destroy>", function() .Tcl(paste("image delete",
                                                    image)))
     lab$image <- image
     lab$fun <- fun
@@ -128,12 +129,12 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     .Tcl(paste("image create Rplot",image))
   }
   copClus<-tk2button(result$option,text="Copy Cluster Plot",width=25,command=copyClusplot)
-  tkgrid(copClus,padx=5,pady=c(5,5),sticky="w")
+  tcltk::tkgrid(copClus,padx=5,pady=c(5,5),sticky="w")
 
-  tkgrid(
+  tcltk::tkgrid(
     plot.label,row = 0,column = 0,padx = 2,sticky="nw"
   )
-  tkgrid(
+  tcltk::tkgrid(
    clusplot,
     row = 1,column = 0,sticky = "nw",padx = 5,pady =
       c(0,0)
@@ -149,8 +150,9 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       fuzzy.member.panel,text = "Fuzzy Membership Matrix",justify =
         "left",font = fontLabel
     )
-  tkgrid(fuzzy.member.label,sticky="w",padx = 5)
-  tclTableU <- tclArray()
+  tcltk::tkgrid(fuzzy.member.label,sticky="w",padx = 5)
+  tclTableU <-
+    tcltk::tclArray()
 
   mat.U <- rbind(paste("Cluster",1:ncol(cluster$U)),cluster$U)
   mat.U <- cbind(c("Observation",rownames(cluster$Clust.desc)),c("Label",cluster$Clust.desc[,pp]),mat.U)
@@ -169,31 +171,31 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       cols = ncol(mat.U),
       selectmode = "extended", colwidth = 20,
       background = "white",yscrollcommand = function(...)
-        tkset(yscr,...),xscrollcommand = function(...)
-          tkset(xscr, ...)
+        tcltk::tkset(yscr,...),xscrollcommand = function(...)
+          tcltk::tkset(xscr, ...)
     )
   yscr <- tk2scrollbar(
-    fuzzy.member.panel, orient = "vertical",
+    fuzzy.member.panel, orientation = "vertical",
     command = function(...)
-      tkyview(U.table, ...)
+      tcltk::tkyview(U.table, ...)
   )
   xscr <- tk2scrollbar(
-    fuzzy.member.panel, orient = "horizontal",
+    fuzzy.member.panel, orientation= "horizontal",
     command = function(...)
-      tkxview(U.table, ...)
+      tcltk::tkxview(U.table, ...)
   )
-  tkgrid(
+  tcltk::tkgrid(
     U.table,yscr,sticky = "w",padx = 5,pady =
       c(5,5)
   )
-  tkconfigure(U.table,state = "disable")
-  tkconfigure(U.table, selectmode = "extended",
+  tcltk::tkconfigure(U.table,state = "disable")
+  tcltk::tkconfigure(U.table, selectmode = "extended",
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
-  tkgrid.configure(yscr, sticky = "nsw")
-  tkgrid(xscr, sticky = "new")
-  tkgrid.rowconfigure(U.table, 0, weight = 1)
-  tkgrid.columnconfigure(U.table, 0, weight = 1)
-  tkgrid.columnconfigure(U.table, 1, weight = 1)
+  tcltk::tkgrid.configure(yscr, sticky = "nsw")
+  tcltk::tkgrid(xscr, sticky = "new")
+  tcltk::tkgrid.rowconfigure(U.table, 0, weight = 1)
+  tcltk::tkgrid.columnconfigure(U.table, 0, weight = 1)
+  tcltk::tkgrid.columnconfigure(U.table, 1, weight = 1)
 
   #----------------------------------------------------#
   #  Output. 3 Centroid Cluster                        #
@@ -205,8 +207,8 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       fuzzy.centroid.panel,text = "Fuzzy Cluster Centroid",justify =
         "left",font = fontLabel
     )
-  tkgrid(fuzzy.centroid.label,sticky="w")
-  tclTableV <- tclArray()
+  tcltk::tkgrid(fuzzy.centroid.label,sticky="w")
+  tclTableV <- tcltk::tclArray()
 
   mat.V <- rbind(paste(colnames(cluster$V)),cluster$V)
   mat.V <- cbind(c("",paste("Cluster",1:nrow(cluster$V))),mat.V)
@@ -230,20 +232,20 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       selectmode = "extended",
       colwidth = 25,
       background = "white",yscrollcommand = function(...)
-        tkset(Vyscr,...),xscrollcommand = function(...)
-          tkset(Vxscr, ...)
+        tcltk::tkset(Vyscr,...),xscrollcommand = function(...)
+          tcltk::tkset(Vxscr, ...)
     )
   Vyscr <- tk2scrollbar(
-    fuzzy.centroid.panel, orient = "vertical",
+    fuzzy.centroid.panel, orientation= "vertical",
     command = function(...)
-      tkyview(V.table, ...)
+      tcltk::tkyview(V.table, ...)
   )
   Vxscr <- tk2scrollbar(
-    fuzzy.centroid.panel, orient = "horizontal",
+    fuzzy.centroid.panel, orientation= "horizontal",
     command = function(...)
-      tkxview(V.table, ...)
+      tcltk::tkxview(V.table, ...)
   )
-  tkconfigure(V.table, selectmode = "extended",
+  tcltk::tkconfigure(V.table, selectmode = "extended",
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
   radar.plotting<-function(){
     x.mean<- apply(cluster$Clust.desc[,1:(pp-1)],2,mean)
@@ -285,8 +287,8 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     try(fun())
     .Tcl(paste("image create Rplot", image))
     lab <- tk2label(parent, image = image)
-    tkpack.propagate(lab,F)
-    tkbind(lab, "<Destroy>", function() .Tcl(paste("image delete",
+    tcltk::tkpack.propagate(lab,F)
+    tcltk::tkbind(lab, "<Destroy>", function() .Tcl(paste("image delete",
                                                    image)))
     lab$image <- image
     lab$fun <- fun
@@ -302,30 +304,30 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     .Tcl(paste("image create Rplot",image))
   }
   copRad<-tk2button(result$option,text="Copy Radar Plot",width=25,command=copyRadplot)
-  tkgrid(copRad,padx=5,pady=c(5,5),sticky="w")
-  tkgrid(radarplot,pady = c(0,0),padx = 5,columnspan=2)
-  tkgrid(
+  tcltk::tkgrid(copRad,padx=5,pady=c(5,5),sticky="w")
+  tcltk::tkgrid(radarplot,pady = c(0,0),padx = 5,columnspan=2)
+  tcltk::tkgrid(
     V.table,Vyscr,sticky = "w",padx = 5,pady =
       c(0,0)
   )
-  tkgrid.configure(Vyscr, sticky = "nsw")
-  tkgrid(Vxscr, sticky = "new")
-  tkgrid.rowconfigure(V.table, 0, weight = 1)
-  tkgrid.columnconfigure(V.table, 0, weight = 1)
-  tkconfigure(V.table,state = "disable")
+  tcltk::tkgrid.configure(Vyscr, sticky = "nsw")
+  tcltk::tkgrid(Vxscr, sticky = "new")
+  tcltk::tkgrid.rowconfigure(V.table, 0, weight = 1)
+  tcltk::tkgrid.columnconfigure(V.table, 0, weight = 1)
+  tcltk::tkconfigure(V.table,state = "disable")
   #----------------------------------------------------#
   #  Output. 4 Validation and Manova                   #
   #----------------------------------------------------#
   validation.panel <-
     tk2frame(result$output$panel,borderwidth = 2,relief = "flat")
 
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(validation.panel,text = "Validation Index",
              justify = "left",font =
                fontLabel),
     padx = 5,sticky = "w"
   )
-  tclValid <- tclArray()
+  tclValid <- tcltk::tclArray()
 
   mat.val <- c("Index Value",valid[1],valid[2],valid[3])
   mat.val <- as.matrix(mat.val)
@@ -345,21 +347,21 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       titlerows = 1,titlecols = 1, width =
         2,height = 4,rows = nrow(mat.val),cols = ncol(mat.val),selectmode = "extended", colwidth = 15, background = "white"
     )
-  tkgrid(
+  tcltk::tkgrid(
     Valid.table,sticky = "w"
   )
-  tkgrid.rowconfigure(Valid.table, 0, weight = 1)
-  tkgrid.columnconfigure(Valid.table, 0, weight = 1)
-  tkconfigure(Valid.table,state = "disable")
-  tkconfigure(Valid.table, selectmode = "extended",
+  tcltk::tkgrid.rowconfigure(Valid.table, 0, weight = 1)
+  tcltk::tkgrid.columnconfigure(Valid.table, 0, weight = 1)
+  tcltk::tkconfigure(Valid.table,state = "disable")
+  tcltk::tkconfigure(Valid.table, selectmode = "extended",
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
 
   ####- Manova
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(validation.panel,text = "MANOVA Analysis",justify = "left",font =
                fontLabel),pady = c(5,5),padx = 5,sticky = "w"
   )
-  tclManov <- tclArray()
+  tclManov <- tcltk::tclArray()
 
   mat.man <- rbind(colnames(manov),manov)
   mat.man <- cbind(c("",row.names(manov)),mat.man)
@@ -384,35 +386,35 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       cols = ncol(mat.man),selectmode = "extended",
       colwidth = 10, background = "white"
     )
-  tkgrid(man.table,sticky = "w",padx = 5)
-  tkgrid.rowconfigure(man.table, 0, weight = 1)
-  tkgrid.columnconfigure(man.table, 0, weight = 1)
-  tkconfigure(man.table,state = "disable")
-  tkconfigure(man.table, selectmode = "extended",
+  tcltk::tkgrid(man.table,sticky = "w",padx = 5)
+  tcltk::tkgrid.rowconfigure(man.table, 0, weight = 1)
+  tcltk::tkgrid.columnconfigure(man.table, 0, weight = 1)
+  tcltk::tkconfigure(man.table,state = "disable")
+  tcltk::tkconfigure(man.table, selectmode = "extended",
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
 
   ###################################
   onClick <- function() {
-    as.numeric(tkcurselection(option.list))->choice
+    as.numeric(tcltk::tkcurselection(option.list))->choice
     print(choice)
     tcl(result$output$panel,"forget",0)
     if(choice==0) {
-      tkadd(result$output$panel,biplot.panel)
+      tcltk::tkadd(result$output$panel,biplot.panel)
     }
     else if(choice==1){
-      tkadd(result$output$panel,fuzzy.member.panel)
+      tcltk::tkadd(result$output$panel,fuzzy.member.panel)
     }
     else if(choice==2){
-      tkadd(result$output$panel,fuzzy.centroid.panel)
+      tcltk::tkadd(result$output$panel,fuzzy.centroid.panel)
     }
     else{
-      tkadd(result$output$panel,validation.panel)
+      tcltk::tkadd(result$output$panel,validation.panel)
     }
   }
-  tkadd(result$output$panel,biplot.panel)
-  tkgrid(result$output$panel,sticky = "nw",padx=5,pady=5)
+  tcltk::tkadd(result$output$panel,biplot.panel)
+  tcltk::tkgrid(result$output$panel,sticky = "nw",padx=5,pady=5)
 
-  tkbind(option.list,"<Double-1>",onClick)
-  tkfocus(result)
-  tkdestroy(parent)
+  tcltk::tkbind(option.list,"<Double-1>",onClick)
+  tcltk::tkfocus(result)
+  tcltk::tkdestroy(parent)
 }

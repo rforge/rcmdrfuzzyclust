@@ -6,16 +6,14 @@
 #' @export
 #' @import tcltk2
 #' @import Rcmdr
-pluginInput<-function(){
+pluginInput <- function() {
   #--------------------------#
   #  DATASET                 #
   #--------------------------#
-
-  dataset <- ActiveDataSet()
-  doItAndPrint(paste("data<-data.frame(",dataset,")"))
-  var <- colnames(data)
-  justDoIt(paste("var.choice<-c()"))
-  justDoIt(paste("data.cluster<<-matrix(nrow=nrow(data))"))
+  doItAndPrint(paste("dataset<<-as.data.frame(",ActiveDataSet(),")"))
+  justDoIt(paste("variable <<- colnames(dataset)"))
+  justDoIt(paste("var.choice<<-c()"))
+  justDoIt(paste("data.cluster<<-matrix(nrow=nrow(dataset))"))
   justDoIt(paste("cluster<<-list()"))
   justDoIt(paste("manov<<-list()"))
   justDoIt(paste("valid<<-list()"))
@@ -24,261 +22,307 @@ pluginInput<-function(){
   #  INTERFACE               #
   #--------------------------#
   #--WINDOWS-----------------#
-  win <-tktoplevel(background="white")
+  win <- tktoplevel(background = "white")
 
-  win1 <- tk2frame(win,relief="flat",width=470,height=365)
-  tkgrid(win1)
-  tkgrid.propagate(win1,F)
-  fontTitle<- tkfont.create(family = "Gentium Book Basic", size = 13,
-                            weight = "bold", underline = T)
-  fontCommands<- tkfont.create(family = "Gentium Basic", size = 10,
-                               weight="bold")
-
-  tktitle(win) <- "Fuzzy Clustering"
+  win1 <- tk2frame(win,relief = "flat",width = 470,height = 365)
+  tcltk::tkgrid(win1)
+  tcltk::tkgrid.propagate(win1,F)
+  fontTitle <-
+    tcltk::tkfont.create(
+      family = "Gentium Book Basic", size = 13,
+      weight = "bold", underline = T
+    )
+  fontCommands <-
+    tcltk::tkfont.create(family = "Gentium Basic", size = 10,
+                         weight = "bold")
+  tcltk::tktitle(win) <- "Fuzzy Clustering"
   #--FRAME DATA OPTIONS------#
-  tkgrid(
-    tk2label(
-      win1, text = "Fuzzy Clustering", font=fontTitle
-    ),
-    padx = 15, pady = c(5, 5),row=0,column=0
+  tcltk::tkgrid(
+    tk2label(win1, text = "Fuzzy Clustering", font = fontTitle),
+    padx = 15, pady = c(5, 5),row = 0,column = 0
   )
 
-  win1$frame1<-tk2frame(win1,borderwidth=2,relief="flat")
-  tkgrid(win1$frame1,padx=0,pady=c(0,0),row=1,column=0,sticky="w")
+  win1$frame1 <- tk2frame(win1,borderwidth = 2,relief = "flat")
+  tcltk::tkgrid(
+    win1$frame1,padx = 0,pady = c(0,0),row = 1,column = 0,
+    sticky = "w"
+  )
   win1$var$list <-
     tk2listbox(
       win1$frame1,width = 25,height = 6,selectmode = "multiple"
     )
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(
-      win1$frame1, text = "Select Variables:\n(Min. 2 Variables)", justify = "left",
-      font=fontCommands
+      win1$frame1, text = "Select Variables:\n(Min. 2 Variables)",
+      justify = "left",
+      font = fontCommands
     ),
-    padx = 15, pady = c(5, 5),sticky="w",row=0,column=0
+    padx = 15, pady = c(5, 5),sticky = "w",row = 0,column = 0
   )
-  tkgrid(win1$var$list, padx = 15, pady = c(0, 15),row=1,column=0,rowspan=2)
-  for (i in var)
-    tkinsert(win1$var$list,"end",i)
-  tkselection.set(win1$var$list, 0)
-  win1$rButton<- tk2button(win1$frame1, text = ">>",width=5)
-  tkgrid(win1$rButton, padx = 5, pady = c(0,5),sticky="s",column=1,row=1)
-  win1$lButton<- tk2button(win1$frame1, text = "<<",width=5)
-  tkgrid(win1$lButton, padx = 5, pady = c(0,5),sticky="n",column=1,row=2)
+  tcltk::tkgrid(
+    win1$var$list, padx = 15, pady = c(0, 15),row = 1,column = 0,
+    rowspan = 2
+  )
+  for (i in variable)
+    tcltk::tkinsert(win1$var$list,"end",i)
+  tcltk::tkselection.set(win1$var$list, 0)
+  win1$rButton <- tk2button(win1$frame1, text = ">>",width = 5)
+  tcltk::tkgrid(
+    win1$rButton, padx = 5, pady = c(0,5),sticky = "s",
+    column = 1,row = 1
+  )
+  win1$lButton <- tk2button(win1$frame1, text = "<<",width = 5)
+  tcltk::tkgrid(
+    win1$lButton, padx = 5, pady = c(0,5),sticky = "n",
+    column = 1,row = 2
+  )
 
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(
       win1$frame1, text = "Cluster Variables: \n(Min. 2 Variables)",
       justify = "left",
-      font=fontCommands
+      font = fontCommands
     ),
-    padx = 15, pady = c(5, 5),sticky="w",row=0,column=2
+    padx = 15, pady = c(5, 5),sticky = "w",row = 0,column = 2
   )
 
   win1$var$cluster <-
     tk2listbox(
       win1$frame1,width = 25,height = 6,selectmode = "multiple"
     )
-  tkgrid(win1$var$cluster, padx = 15, pady = c(0, 15),
-         row=1,column=2,rowspan=2)
+  tcltk::tkgrid(
+    win1$var$cluster, padx = 15, pady = c(0, 15),
+    row = 1,column = 2,rowspan = 2
+  )
 
-  onRight<-function(){
-    tkdelete(win1$var$cluster,0,"end")
-    var.choice<<- var[as.numeric(tkcurselection(win1$var$list))+1]
+  onRight <- function() {
+    tcltk::tkdelete(win1$var$cluster,0,"end")
+    var.choice <<-
+      variable[as.numeric(tcltk::tkcurselection(win1$var$list)) + 1]
     for (i in var.choice)
-      tkinsert(win1$var$cluster,"end",i)
-    tkselection.set(win1$var$cluster, 0)
+      tcltk::tkinsert(win1$var$cluster,"end",i)
+    tcltk::tkselection.set(win1$var$cluster, 0)
   }
-  onLeft<-function(){
-    var.remo.choice<<- var.choice[as.numeric(tkcurselection(win1$var$cluster))+1]
-    tkdelete(win1$var$cluster,0,"end")
-    var.choice<<-var.choice[-which(var.choice%in%var.remo.choice)]
+  onLeft <- function() {
+    var.remo.choice <<-
+      var.choice[as.numeric(tcltk::tkcurselection(win1$var$cluster)) + 1]
+    tcltk::tkdelete(win1$var$cluster,0,"end")
+    var.choice <<- var.choice[-which(var.choice %in% var.remo.choice)]
     for (i in var.choice)
-      tkinsert(win1$var$cluster,"end",i)
-    tkselection.set(win1$var$cluster, 0)
+      tcltk::tkinsert(win1$var$cluster,"end",i)
+    tcltk::tkselection.set(win1$var$cluster, 0)
   }
-  tkconfigure(win1$rButton,command=onRight)
-  tkconfigure(win1$lButton,command=onLeft)
+  tcltk::tkconfigure(win1$rButton,command = onRight)
+  tcltk::tkconfigure(win1$lButton,command = onLeft)
 
   #--METHODS    OPTIONS------#
-  win1$frame2<-tk2frame(win1,borderwidth=2,relief="flat")
-  tkgrid(win1$frame2,padx=0,pady=c(0,0),row=2,column=0,sticky="w")
+  win1$frame2 <- tk2frame(win1,borderwidth = 2,relief = "flat")
+  tcltk::tkgrid(
+    win1$frame2,padx = 0,pady = c(0,0),row = 2,column = 0,sticky = "w"
+  )
   fuzz.method <- c("Fuzzy C-Means",
                    "Gustafson Kessel")
   win1$method <-
     tk2combobox(win1$frame2,width = 30,values = fuzz.method)
-  nCluster <- tk2spinbox(win1$frame2,width = 5,value = c(2:nrow(data)))
-  mf<-seq(1,4,0.25)
+  nCluster <-
+    tk2spinbox(win1$frame2,width = 5,value = c(2:nrow(dataset)))
+  mf <- seq(1,4,0.25)
   fuzzifier.param <-
-    tk2spinbox(
-      win1$frame2,width = 5,value = mf
-    )
-  gamma.param<- tk2spinbox(win1$frame2,width=5,value=seq(0,1,by=.1))
-  SeedVal <- tclVar("0")
+    tk2spinbox(win1$frame2,width = 5,value = mf)
+  gamma.param <- tk2spinbox(win1$frame2,width = 5,value = seq(0,1,
+                                                              by = .1))
+  SeedVal <- tcltk::tclVar("0")
   SeedEntry <- tk2entry(win1$frame2, width = 5,
                         textvariable = SeedVal)
-  ensemble.cek.value<-tclVar("0")
-  ensemble.cek<-tk2checkbutton(win1$frame2,variable=ensemble.cek.value)
-  n.ensemble<- tk2spinbox(win1$frame2,width=5,value=seq(10,100,by=10))
-  tkgrid(
+  ensemble.cek.value <- tcltk::tclVar("0")
+  ensemble.cek <- tk2checkbutton(win1$frame2,
+                                 variable = ensemble.cek.value)
+  n.ensemble <-
+    tk2spinbox(win1$frame2,width = 5,value = seq(10,100,by = 10))
+  tcltk::tkgrid(
     tk2label(
       win1$frame2, text = "N Cluster:", justify = "left",
-      font=fontCommands
+      font = fontCommands
     ),
     nCluster,
     tk2label(
       win1$frame2, text = "Fuzzifier:", justify = "left",
-      font=fontCommands
+      font = fontCommands
     ),
     fuzzifier.param,
     tk2label(
-      win1$frame2,text="Gamma:",justify="left",font=fontCommands
+      win1$frame2,text = "Gamma:",justify = "left",font = fontCommands
     ),
     gamma.param,
-    padx = 10,pady = c(5,5),sticky="w"
+    padx = 10,pady = c(5,5),sticky = "w"
   )
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(
       win1$frame2, text = "Method:", justify = "left",
-      font=fontCommands
+      font = fontCommands
     ),
     win1$method,
-    padx = 10,pady = c(5,5),sticky="w"
+    padx = 10,pady = c(5,5),sticky = "w"
   )
-  tkgrid(
+  tcltk::tkgrid(
     tk2label(
       win1$frame2, text = "Seed:", justify = "left",
-      font=fontCommands
+      font = fontCommands
     ),
-    padx = 10,pady = c(5,5),sticky="w",
-    row=1,column=4
+    padx = 10,pady = c(5,5),sticky = "w",
+    row = 1,column = 4
   )
-  tkgrid(
-    SeedEntry,row=1,column=5,padx = 10,pady = c(5,5),sticky="w"
-
+  tcltk::tkgrid(
+    SeedEntry,row = 1,column = 5,padx = 10,pady = c(5,5),sticky = "w"
   )
-  tkgrid(tk2label(
-    win1$frame2,text="Ensemble",justify="left", font=fontCommands
-  ),ensemble.cek,
-  tk2label(win1$frame2,text="N ensemble:",justify="left",font=fontCommands),
-  n.ensemble,
-  padx=10,pady=c(5,5),sticky="W"
+  tcltk::tkgrid(
+    tk2label(
+      win1$frame2,text = "Ensemble",justify = "left", font = fontCommands
+    ),ensemble.cek,
+    tk2label(
+      win1$frame2,text = "N ensemble:",justify = "left",font = fontCommands
+    ),
+    n.ensemble,
+    padx = 10,pady = c(5,5),sticky = "W"
   )
-  method <- tclVar("Fuzzy C-Means")
-  tkgrid.configure(win1$method,columnspan=3)
-  tkconfigure(win1$method, textvariable = method)
-  method.nCluster <- tclVar("2")
-  tkconfigure(nCluster, textvariable = method.nCluster)
+  method <- tcltk::tclVar("Fuzzy C-Means")
+  tcltk::tkgrid.configure(win1$method,columnspan = 3)
+  tcltk::tkconfigure(win1$method, textvariable = method)
+  method.nCluster <- tcltk::tclVar("2")
+  tcltk::tkconfigure(nCluster, textvariable = method.nCluster)
   method.fuzzifier <- tclVar("1")
-  tkconfigure(fuzzifier.param, textvariable = method.fuzzifier)
-  gamma.value<-tclVar("0")
-  tkconfigure(gamma.param,textvariable=gamma.value)
-  ensemble.seed<-tclVar("10")
-  tkconfigure(n.ensemble,textvariable=ensemble.seed)
+  tcltk::tkconfigure(fuzzifier.param, textvariable = method.fuzzifier)
+  gamma.value <- tcltk::tclVar("0")
+  tcltk::tkconfigure(gamma.param,textvariable = gamma.value)
+  ensemble.seed <- tcltk::tclVar("10")
+  tcltk::tkconfigure(n.ensemble,textvariable = ensemble.seed)
 
   tk2state.set(gamma.param,"disabled")
-  OnImprove<-function(){
-    if(tclvalue(method)=="Gustafson Kessel")
+  OnImprove <- function() {
+    if (tcltk::tclvalue(method) == "Gustafson Kessel")
       tk2state.set(gamma.param,"normal")
     else
       tk2state.set(gamma.param,"disabled")
   }
-  tkbind(win1$method,"<Button 1>",OnImprove)
+  tcltk::tkbind(win1$method,"<Button 1>",OnImprove)
   tk2state.set(n.ensemble,"disable")
-  onCek<-function(){
-    if(tclvalue(ensemble.cek.value)=="0")
-    { tk2state.set(n.ensemble,"normal")
-      }else{
+  onCekin <- function() {
+    if (tcltk::tclvalue(ensemble.cek.value) == "0")
+    {
+      tk2state.set(n.ensemble,"normal")
+    }else{
       tk2state.set(n.ensemble,"disable")
     }
   }
-  tkbind(ensemble.cek,"<Button 1>",onCek)
+  tcltk::tkbind(ensemble.cek,"<Button 1>",onCekin)
 
-  win1$frame3<-tk2frame(win1,borderwidth=2,relief="flat")
-  tkgrid(win1$frame3,padx=0,pady=c(0,0),row=3,column=0,sticky="w")
-  nextButton<-tk2button(win1$frame3,text="Go>>",width="10")
-  statuslabel<-tk2label(win1$frame3,text="STATUS: - ",
-                        font=fontCommands,
-                        justify="left")
-  pb<-tk2progress(win1$frame3,orientation = "horizontal",
-                  length=350,mode="determinate")
-  tkgrid(
+  win1$frame3 <- tk2frame(win1,borderwidth = 2,relief = "flat")
+  tcltk::tkgrid(
+    win1$frame3,padx = 0,pady = c(0,0),row = 3,column = 0,sticky = "w"
+  )
+  nextButton <- tk2button(win1$frame3,text = "Go>>",width = "10")
+  statuslabel <- tk2label(win1$frame3,text = "STATUS: - ",
+                          font = fontCommands,
+                          justify = "left")
+  pb <- tk2progress(
+    win1$frame3,orientation = "horizontal",
+    length = 350,mode = "determinate"
+  )
+  tcltk::tkgrid(
     nextButton,pb,
-    padx = 5, pady = c(0,5),sticky="w")
-  tkgrid(statuslabel,
-         padx=5,
-         column=1,sticky="w",
-         pady=c(0,5))
-  on.next<-function(){
-    tcl("update")
-    for(i in var.choice)
-      data.cluster<<-cbind.data.frame(data.cluster,eval(parse(text=paste("data$",i,sep=""))))
-    data.cluster<<-data.cluster[,-1]
-    colnames(data.cluster)<<-var.choice
-    rownames(data.cluster)<<-rownames(data)
-    tkconfigure(pb,value=10)
-    tkconfigure(statuslabel,text="STATUS: PROCESS CLUSTERING....")
-    tcl("update")
+    padx = 5, pady = c(0,5),sticky = "w"
+  )
+  tcltk::tkgrid(
+    statuslabel,
+    padx = 5,
+    column = 1,sticky = "w",
+    pady = c(0,5)
+  )
+  on.next <- function() {
+    tcltk::tcl("update")
+    for (i in var.choice)
+      data.cluster <<- cbind.data.frame(data.cluster,
+                                        eval(parse(text = paste("dataset$",i,
+                                                                sep = ""))))
+    data.cluster <<- data.cluster[,-1]
+    colnames(data.cluster) <<- var.choice
+    rownames(data.cluster) <<- rownames(dataset)
+    tcltk::tkconfigure(pb,value = 10)
+    tcltk::tkconfigure(statuslabel,text = "STATUS: PROCESS CLUSTERING....")
+    tcltk::tcl("update")
     Sys.sleep(.5)
-    if(tclvalue(ensemble.cek.value)=="0")
-    {if(tclvalue(method)=="Fuzzy C-Means")
-      cluster<<-fuzzy.CM(data.cluster,
-                         K=as.numeric(tclvalue(method.nCluster)),
-                         m=as.numeric(tclvalue(method.fuzzifier)),
-                         RandomNumber=as.numeric(tclvalue(SeedVal)))
-    else
-      cluster<<-fuzzy.GK(data.cluster,
-                         K=as.numeric(tclvalue(method.nCluster)),
-                         m=as.numeric(tclvalue(method.fuzzifier)),
-                         RandomNumber=as.numeric(tclvalue(SeedVal)),
-                         gamma=as.numeric(tclvalue(gamma.value))
+    if (tcltk::tclvalue(ensemble.cek.value) == "0")
+    {
+      if (tcltk::tclvalue(method) == "Fuzzy C-Means")
+        cluster <<- fuzzy.CM(
+          data.cluster,
+          K = as.numeric(tcltk::tclvalue(method.nCluster)),
+          m = as.numeric(tcltk::tclvalue(method.fuzzifier)),
+          RandomNumber = as.numeric(tcltk::tclvalue(SeedVal))
+        )
+      else
+        cluster <<- fuzzy.GK(
+          data.cluster,
+          K = as.numeric(tcltk::tclvalue(method.nCluster)),
+          m = as.numeric(tcltk::tclvalue(method.fuzzifier)),
+          RandomNumber = as.numeric(tcltk::tclvalue(SeedVal)),
+          gamma = as.numeric(tcltk::tclvalue(gamma.value))
 
-      )}else{
-        if(tclvalue(method)=="Fuzzy C-Means"){
-            cluster<<-soft.vote.ensemble(data = data.cluster,
-                                         seed=as.numeric(tclvalue(ensemble.seed)),
-                                         method = "FCM",
-                                         K=as.numeric(tclvalue(method.nCluster)),
-                                         m=as.numeric(tclvalue(method.fuzzifier)))
-        }else {
-            cluster<<-soft.vote.ensemble(data = data.cluster,
-                                         seed=as.numeric(tclvalue(ensemble.seed)),
-                                         method = "GK",
-                                         K=as.numeric(tclvalue(method.nCluster)),
-                                         m=as.numeric(tclvalue(method.fuzzifier)),
-                                         gamma=as.numeric(tclvalue(gamma.value)))
+        )
+    }else{
+      if (tcltk::tclvalue(method) == "Fuzzy C-Means") {
+        cluster <<- soft.vote.ensemble(
+          data = data.cluster,
+          seed = as.numeric(tcltk::tclvalue(ensemble.seed)),
+          method = "FCM",
+          K = as.numeric(tcltk::tclvalue(method.nCluster)),
+          m = as.numeric(tcltk::tclvalue(method.fuzzifier))
+        )
+      }else {
+        cluster <<- soft.vote.ensemble(
+          data = data.cluster,
+          seed = as.numeric(tcltk::tclvalue(ensemble.seed)),
+          method = "GK",
+          K = as.numeric(tcltk::tclvalue(method.nCluster)),
+          m = as.numeric(tcltk::tclvalue(method.fuzzifier)),
+          gamma = as.numeric(tcltk::tclvalue(gamma.value))
+        )
 
-        }
       }
+    }
 
-    tkconfigure(pb,value=60)
-    tkconfigure(statuslabel,text="STATUS: VALIDATING...")
-    tcl("update")
+    tcltk::tkconfigure(pb,value = 60)
+    tcltk::tkconfigure(statuslabel,text = "STATUS: VALIDATING...")
+    tcltk::tcl("update")
     Sys.sleep(.5)
-    valid<<-validation.index(cluster)
-    tkconfigure(pb,value=80)
-    tcl("update")
+    valid <<- validation.index(cluster)
+    tcltk::tkconfigure(pb,value = 80)
+    tcltk::tcl("update")
     Sys.sleep(.5)
-    manov<<-try(checkManova(cluster),silent = T)
-    tkconfigure(pb,value=90)
-    tkconfigure(statuslabel,text="STATUS: PREPARING RESULT...")
-    tcl("update")
+    manov <<- try(checkManova(cluster),silent = T)
+    tcltk::tkconfigure(pb,value = 90)
+    tcltk::tkconfigure(statuslabel,text = "STATUS: PREPARING RESULT...")
+    tcltk::tcl("update")
     Sys.sleep(.5)
-    tkconfigure(pb,value=100)
-    tkconfigure(statuslabel,text="STATUS: FINISH :)")
-    tcl("update")
+    tcltk::tkconfigure(pb,value = 100)
+    tcltk::tkconfigure(statuslabel,text = "STATUS: FINISH :)")
+    tcltk::tcl("update")
     print("FINISH")
-    if(tclvalue(ensemble.cek.value)!="0")
-      methods=paste(tclvalue(method),"with Soft Voting Cluster Ensemble") else methods=tclvalue(method)
+    if (tcltk::tclvalue(ensemble.cek.value) != "0")
+      methods = paste(tcltk::tclvalue(method),
+                      "with Soft Voting Cluster Ensemble")
+    else
+      methods = tcltk::tclvalue(method)
     result.GUI(win,cluster,valid,manov,methods)
   }
-  tcl("ttk::style", "configure", "TFrame", background="white")
-  tcl("ttk::style", "configure", "TLabel", background="white")
-  tcl("ttk::style", "configure", "TButton",font=fontCommands)
-  tcl("ttk::style", "configure", "TButton",background="white")
-  tcl("ttk::style", "map", "TButton", background=c("active", "blue"))
+  tcltk::tcl("ttk::style", "configure", "TFrame", background = "white")
+  tcltk::tcl("ttk::style", "configure", "TLabel", background = "white")
+  tcltk::tcl("ttk::style", "configure", "TButton",font = fontCommands)
+  tcltk::tcl("ttk::style", "configure", "TButton",background = "white")
+  tcltk::tcl("ttk::style", "map", "TButton", background = c("active", "blue"))
 
-  tcl("ttk::style", "configure","TPanedwindow", background="white")
-  tcl("ttk::style", "configure","TProgressbar", troughcolor="blue")
-  tkconfigure(nextButton,command=on.next)
-  tkfocus(win1)
+  tcltk::tcl("ttk::style", "configure","TPanedwindow", background = "white")
+  tcltk::tcl("ttk::style", "configure","TProgressbar", troughcolor = "blue")
+  tcltk::tkconfigure(nextButton,command = on.next)
+  tcltk::tkfocus(win1)
 }

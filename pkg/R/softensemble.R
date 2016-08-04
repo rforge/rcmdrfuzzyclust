@@ -27,6 +27,8 @@
 #' @import foreach
 #' @import MASS
 #' @import doParallel
+#' @import iterators
+#' @import parallel
 soft.vote.ensemble<-function(data,
                              seed,
                              method="FCM",
@@ -158,6 +160,6 @@ soft.vote.ensemble<-function(data,
   result$call<-match.call()
   result$seeding<-seeding
   class(result)<-"fuzzyclust"
-  result
+  print(result)
   return(result)
 }

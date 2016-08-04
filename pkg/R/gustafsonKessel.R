@@ -169,6 +169,6 @@ fuzzy.GK<-function(X,K=2,m=1.5,max.iteration=100,
   result$call<-match.call()
   result$Clust.desc <- Clust.desc
   class(result)<-"fuzzyclust"
-  result
+  print(result)
   return(result)
 }

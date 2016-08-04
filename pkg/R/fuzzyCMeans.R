@@ -121,6 +121,6 @@ fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
   result$call<-match.call()
   result$Clust.desc <- Clust.desc
   class(result)<-"fuzzyclust"
-  result
+  print(result)
   return(result)
 }

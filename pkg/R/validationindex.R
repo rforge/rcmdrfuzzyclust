@@ -97,6 +97,5 @@ print.validation<-function(x,...){
   cat("\nCE Index\t:",x[2])
   cat("\nXB Index\t:",x[4])
   cat("\nKwon Index\t:",x[3])
-  NextMethod("print")
 }
 
