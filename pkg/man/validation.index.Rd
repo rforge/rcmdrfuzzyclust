@@ -23,7 +23,7 @@ Validation Index of Fuzzy Clustering
 }
 \details{
 This function provide validation index that calculated from fuzzy clustering
-result. There are 4 index that calculated, Xie Beni, Kwon, MPC, and CE index. Both three indexes
+result. There are 4 index that calculated, Xie Beni, MPC, and CE index. Both three indexes
 calculated from fuzzy membership and data point.
 
 Xie Beni index calculated compactness and separation of clustering.

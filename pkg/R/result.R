@@ -11,7 +11,6 @@
 #' @import tcltk2
 #' @import tkrplot
 #' @import Rcmdr
-#'
 result.GUI <- function(parent,cluster,valid,manov,method) {
   result <- tcltk::tktoplevel(background = "white")
   tcltk::tktitle(result) <- "Result"
@@ -32,10 +31,11 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     tk2label(
       result,text = resultlabel,font =
         fontTitle
-    ),row = 0,column = 0,pady = c(5,5),padx = 5,sticky="ew",columnspan=2
+    ),row = 0,column = 0,pady = c(5,5),padx = 5,
+    columnspan=2
   )
   result$option<-tk2frame(result,borderwidth =1, relief="flat")
-  result$output<-tk2frame(result,borderwidth=2,relief="solid",width=625,height=475)
+  result$output<-tk2frame(result,borderwidth=2,relief="solid",width=625,height=500)
   tcltk::tkgrid(result$option,
          pady=5,padx=5,sticky="nw")
   tcltk::tkgrid.configure(result$output,column=1,row=1,padx=5,pady=5)
@@ -54,6 +54,8 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   for (o in options)
     tcltk::tkinsert(option.list, "end", o)
   tcltk::tkselection.set(option.list, 0)
+  report.button<-tk2button(result$option,
+                           text="Generate Report",width=25)
 
   #----------------------------------------------------#
   #  Output. 1 Plot Biplot Cluster and Labeling        #
@@ -61,19 +63,23 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
 
   biplot.panel <-
     tk2frame(result$output$panel,borderwidth = 2,relief = "flat")
+  biplot.label.panel <-
+    tk2frame(biplot.panel,borderwidth = 2,relief = "flat")
   plot.label <-
     tk2label(
-      biplot.panel,text = "Biplot Cluster",justify =
+      biplot.label.panel,text = "Biplot Cluster",justify =
         "left",font = fontLabel
     )
-  ####-> Prepare PCA Data and Plotting
   pp <- ncol(cluster$Clust.desc)
-  data.clu <- cluster$Clust.desc[,1:pp - 1]
-  data.PCA <- prcomp(data.clu,scale. = T)
-  z1 <- as.data.frame(cbind(data.PCA$x[,1:2],cluster$Clust.desc[,pp]))
 
-  windowsFonts(A=windowsFont("Gentium Basic"))
+  ####-> Prepare PCA Data and Plotting
   ploting <- function() {
+    data.clu <- cluster$Clust.desc[,1:pp - 1]
+    data.PCA <- prcomp(data.clu,scale. = T)
+    z1 <- as.data.frame(cbind(data.PCA$x[,1:2],cluster$Clust.desc[,pp]))
+
+    windowsFonts(A=windowsFont("Gentium Basic"))
+
     datapc <- data.frame(varnames=rownames(data.PCA$rotation),
                          data.PCA$rotation)
     mult <- min(
@@ -121,18 +127,11 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   }
   clusplot <- tkrplotClus(
     biplot.panel, fun = ploting)
-  copyClusplot<-function(){
-    image <- paste("Rplot", .make.tkindex(), sep = "")
-    win.metafile(width = 3, height = 3, restoreConsole = FALSE)
-    .my.tkdev(1.5, 1.5)
-    try(ploting())
-    .Tcl(paste("image create Rplot",image))
-  }
-  copClus<-tk2button(result$option,text="Copy Cluster Plot",width=25,command=copyClusplot)
-  tcltk::tkgrid(copClus,padx=5,pady=c(5,5),sticky="w")
 
+  tcltk::tkgrid(biplot.label.panel,sticky="w")
   tcltk::tkgrid(
-    plot.label,row = 0,column = 0,padx = 2,sticky="nw"
+    plot.label,
+    row = 0,padx = 2,sticky="w"
   )
   tcltk::tkgrid(
    clusplot,
@@ -165,8 +164,8 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   U.table <-
     tk2table(
       fuzzy.member.panel,
-      variable = tclTableU,titlerows = 1,titlecols = 1,
-      width =4,height = 20,
+      variable = tclTableU,
+      width =4,height = 20, titlerows = 1,titlecols=1,
       rows = nrow(mat.U),
       cols = ncol(mat.U),
       selectmode = "extended", colwidth = 20,
@@ -202,12 +201,13 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   #----------------------------------------------------#
   fuzzy.centroid.panel <-
     tk2frame(result$output$panel,borderwidth = 2,relief = "flat")
+  fuzzy.centroid.panel.label <-
+    tk2frame(fuzzy.centroid.panel,borderwidth = 2,relief = "flat")
   fuzzy.centroid.label <-
     tk2label(
-      fuzzy.centroid.panel,text = "Fuzzy Cluster Centroid",justify =
+      fuzzy.centroid.panel.label,text = "Fuzzy Cluster Centroid",justify =
         "left",font = fontLabel
     )
-  tcltk::tkgrid(fuzzy.centroid.label,sticky="w")
   tclTableV <- tcltk::tclArray()
 
   mat.V <- rbind(paste(colnames(cluster$V)),cluster$V)
@@ -296,15 +296,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   }
   radarplot <- tkrplotRadar(
     fuzzy.centroid.panel, fun = radar.plotting)
-  copyRadplot<-function(){
-    image <- paste("Rplot", .make.tkindex(), sep = "")
-    win.metafile(width = 3, height = 3, restoreConsole = FALSE)
-    .my.tkdev(1.5, 1.5)
-    try(radar.plotting())
-    .Tcl(paste("image create Rplot",image))
-  }
-  copRad<-tk2button(result$option,text="Copy Radar Plot",width=25,command=copyRadplot)
-  tcltk::tkgrid(copRad,padx=5,pady=c(5,5),sticky="w")
+  tcltk::tkgrid(fuzzy.centroid.panel.label,sticky="w")
   tcltk::tkgrid(radarplot,pady = c(0,0),padx = 5,columnspan=2)
   tcltk::tkgrid(
     V.table,Vyscr,sticky = "w",padx = 5,pady =
@@ -332,7 +324,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   mat.val <- c("Index Value",valid[1],valid[2],valid[3])
   mat.val <- as.matrix(mat.val)
   mat.val <-
-    cbind(c("Index Name","MPC Index","CE Index","Kwon index"),mat.val)
+    cbind(c("Index Name","MPC Index","CE Index","XB index"),mat.val)
   for (i in 1:nrow(mat.val))
     for (j in 1:ncol(mat.val)){
       if (i < 2)
@@ -364,7 +356,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   tclManov <- tcltk::tclArray()
 
   mat.man <- rbind(colnames(manov),manov)
-  mat.man <- cbind(c("",row.names(manov)),mat.man)
+  mat.man <- cbind(c("","Cluster","Residuals"),mat.man)
 
   for (i in 1:nrow(mat.man))
     for (j in 1:ncol(mat.man))
@@ -394,6 +386,41 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
 
   ###################################
+  onReport<-function(){
+    wdfirst<-getwd()
+    owd<-setwd(tempdir())
+    on.exit(owd)
+    cluster.fuzzy<-list(cluster,valid,manov)
+    save(cluster.fuzzy,file="cluster.Rda")
+    png("Biplot.png")
+    ploting()
+    dev.off()
+    png("Radar.png")
+    radar.plotting()
+    dev.off()
+    Try <- function(expr) {
+      res <- try(expr, silent = TRUE)
+      if (inherits(res, "try-error")) {
+        res <- sub("^.+\n +\\[tcl\\] ", "Tcl error: ", res)
+        tcltk::tkmessageBox(title = "An error has occured!",
+                     message = as.character(res), icon = "error", type = "ok")
+      }
+      res
+    }
+    rmd.report.path<-path.package(package="rcmdrfuzzyclust")
+    rmd.report.path<-paste(rmd.report.path,"/Report.Rmd",sep="")
+    file.copy(rmd.report.path,"Report.Rmd")
+    Try(rmarkdown::render("Report.Rmd",output_file=paste(wdfirst,"/Report.docx",sep="")))
+    res <- tkmessageBox(title = "",
+                        message = paste("Check Report.docx in",
+                                        paste(wdfirst,
+                                              "/Report.docx",sep=""),
+                                        "directory :)",sep=""),
+                                        icon = "info", type = "ok")
+    setwd(wdfirst)
+  }
+  tcltk::tkconfigure(report.button,command=onReport)
+  tcltk::tkgrid(report.button,pady=5,padx=5)
   onClick <- function() {
     as.numeric(tcltk::tkcurselection(option.list))->choice
     print(choice)

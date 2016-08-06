@@ -8,7 +8,7 @@
 #' @return CE.index Classification Entropy
 #'
 #' @details This function provide validation index that calculated from fuzzy clustering
-#' result. There are 4 index that calculated, Xie Beni, Kwon, MPC, and CE index. Both three indexes
+#' result. There are 4 index that calculated, Xie Beni, MPC, and CE index. Both three indexes
 #' calculated from fuzzy membership and data point.
 #' @details Xie Beni index calculated compactness and separation of clustering.
 #' @details Kwon index extended Xie Beni index to eliminate its tendency to monotonically decrease when number of cluster approach the number of data point.
@@ -64,27 +64,8 @@ validation.index<-function(cluster){
       S.min<-min(S.temp2[lower.tri(S.temp2)])
       S.index<-sum(S.temp1)/(S.min*n)
   },silent=T)
-  #Kwon
-  K.index<-10^10
-  try({
-    V.bar<-colMeans(data.X)
-    K.term.1<-0
-    for(i in 1:n)
-      for(k in 1:K)
-        K.term.1<-D[i,k]*(U[i,k]^2)+K.term.1
-    K.term.2<-0
-    for(k in 1:K)
-      K.term.2<-t(V[k,]-V.bar)%*%(V[k,]-V.bar)+K.term.2
-    K.denom<-matrix(0,K,K)
-    for(k1 in 1:K)
-      for(k2 in 1:K)
-        K.denom[k1,k2]<-t(V[k1,]-V[k2,])%*%(V[k1,]-V[k2,])
-    K.denom<-min(K.denom[lower.tri(K.denom)])
-    K.index<-(K.term.1+K.term.2/K)/K.denom
-  },silent=T)
 
-
-  validation<-c(MPC.index,CE.index,as.numeric(K.index),XB.index,S.index)
+  validation<-c(MPC.index,CE.index,XB.index)
   class(validation)<-"validation"
   validation
   return(validation)
@@ -95,7 +76,6 @@ print.validation<-function(x,...){
   cat("Validation Index")
   cat("\nMPC Index\t:",x[1])
   cat("\nCE Index\t:",x[2])
-  cat("\nXB Index\t:",x[4])
-  cat("\nKwon Index\t:",x[3])
+  cat("\nXB Index\t:",x[3])
 }
 

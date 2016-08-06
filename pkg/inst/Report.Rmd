@@ -1,0 +1,41 @@
+---
+title: "Fuzzy Clustering Analysis"
+output: word_document
+---
+
+# __Result of Fuzzy Clustering Analysis__
+## Cluster Description
+```{r,echo=FALSE}
+load("cluster.Rda")
+pp<-ncol(cluster.fuzzy[[1]]$Clust.desc)
+k<-ncol(cluster.fuzzy[[1]]$U)
+cat(paste("Function Objective:",cluster.fuzzy[[1]]$func.obj,"\n"))
+cat(paste("Fuzzyfier:",cluster.fuzzy[[1]]$m,"\n"))
+cat(paste("N Cluster:",k,"\n"))
+```
+## Cluster Biplot
+![](Biplot.png)
+
+## Radar Plot: Cluster Centroid
+![](Radar.png)
+
+## Cluster Centroid
+```{r, echo=FALSE}
+library(knitr)
+Cluster<-colnames(cluster.fuzzy[[1]]$U)
+kable(cbind(Cluster,round(cluster.fuzzy[[1]]$V,2)))
+```
+
+## Fuzzy Partition Matrix
+```{r, echo=FALSE}
+library(knitr)
+observation<-rownames(cluster.fuzzy[[1]]$Clust.desc)
+kable(cbind(observation,round(cluster.fuzzy[[1]]$U,2)))
+```
+
+## Index Validation
+```{r, echo=F}
+cat("MPC Index:",cluster.fuzzy[[2]][1],"\n")
+cat("CE Index:",cluster.fuzzy[[2]][2],"\n")
+cat("XB Index:",cluster.fuzzy[[2]][3],"\n")
+```

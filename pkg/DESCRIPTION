@@ -13,8 +13,9 @@ Description: The R Commander Plug-in for Fuzzy Clustering Methods. This Plug-
     of significant differences of grouping/clustering), this plug-in use MANOVA
     analysis with Pillai trace statistics. For stabilize the result, this package provide
     soft voting cluster ensemble function. Visualization of result are provided via plugin that must be load in Rcmdr file.
-Depends: R (>= 3.2.5), Rcmdr
+Depends: R (>= 3.2.5)
 Imports:
+  Rcmdr,
   doParallel,
   tcltk2,
   foreach,
@@ -24,7 +25,7 @@ Imports:
   reshape2,
   tkrplot,
   iterators,
-  parallel,
+  parallel
 Suggests:
   knitr,
   rmarkdown
