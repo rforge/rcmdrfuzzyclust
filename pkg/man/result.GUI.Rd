@@ -20,4 +20,7 @@ result.GUI(parent, cluster, valid, manov, method)
 \description{
 Result GUI
 }
+\details{
+Not run by users
+}
 

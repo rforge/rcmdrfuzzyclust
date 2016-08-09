@@ -4,38 +4,59 @@ output: word_document
 ---
 
 # __Result of Fuzzy Clustering Analysis__
+
 ## Cluster Description
 ```{r,echo=FALSE}
 load("cluster.Rda")
 pp<-ncol(cluster.fuzzy[[1]]$Clust.desc)
 k<-ncol(cluster.fuzzy[[1]]$U)
-cat(paste("Function Objective:",cluster.fuzzy[[1]]$func.obj,"\n"))
-cat(paste("Fuzzyfier:",cluster.fuzzy[[1]]$m,"\n"))
-cat(paste("N Cluster:",k,"\n"))
+cat(paste("Function Objective\t:",cluster.fuzzy[[1]]$func.obj,"\n"))
+cat(paste("Fuzzyfier\t:",cluster.fuzzy[[1]]$m,"\n"))
+cat(paste("N Cluster\t:",k,"\n"))
+cat("Hard Label Partition\t:\n")
+Label<-cluster.fuzzy[[1]]$Clust.desc[,ncol(cluster.fuzzy[[1]]$Clust.desc)]
+library(knitr)
+kable(Label)
+
 ```
+
 ## Cluster Biplot
+Note: this plot can be used to interpret your cluster on data that visualize in 2D via Principal Component Analysis.
+
 ![](Biplot.png)
 
 ## Radar Plot: Cluster Centroid
+Note: Radar Plot can interpret your centroid in a Radar Plot. The value "0" on label means the mean value of variable. The value "+/- 0.5" means the mean value of variable +/- 0.5 standar deviation. And the value "+/- 1" means the mean value of variable +/- standar deviation. The radar plot made this way to be easy understanding and easy on comparison between Cluster Centroid.
+
 ![](Radar.png)
 
 ## Cluster Centroid
+Note: This is the exact value of centroid.
 ```{r, echo=FALSE}
 library(knitr)
 Cluster<-colnames(cluster.fuzzy[[1]]$U)
+colnames(cluster.fuzzy[[1]]$V)->kolomvariabel
+paste("V",c(1:ncol(cluster.fuzzy[[1]]$V)),sep="")->variabel
+colnames(cluster.fuzzy[[1]]$V)<-variabel
 kable(cbind(Cluster,round(cluster.fuzzy[[1]]$V,2)))
+cat("\nKeterangan Variabel\n")
+kable(cbind(kolomvariabel, variabel))
 ```
 
 ## Fuzzy Partition Matrix
+Partition can be interpret the value of probability of membership among cluster. The highest partition mean the more probability to grouping to that cluster.
 ```{r, echo=FALSE}
 library(knitr)
 observation<-rownames(cluster.fuzzy[[1]]$Clust.desc)
 kable(cbind(observation,round(cluster.fuzzy[[1]]$U,2)))
+
 ```
 
 ## Index Validation
+Note: MPC stands from Modified partition coefficient, CE stands from Classification Entropy, XB stands from Xie Beni, and S stands from Separation index.
 ```{r, echo=F}
-cat("MPC Index:",cluster.fuzzy[[2]][1],"\n")
-cat("CE Index:",cluster.fuzzy[[2]][2],"\n")
-cat("XB Index:",cluster.fuzzy[[2]][3],"\n")
+cat("MPC Index\t:",cluster.fuzzy[[2]][1],"\n")
+cat("CE Index\t:",cluster.fuzzy[[2]][2],"\n")
+cat("XB Index\t:",cluster.fuzzy[[2]][3],"\n")
+cat("S Index\t:",cluster.fuzzy[[2]][4],"\n")
 ```

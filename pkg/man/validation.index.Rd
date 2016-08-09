@@ -12,8 +12,6 @@ validation.index(cluster)
 \value{
 XB.index Xie Beni index
 
-K.index Kwon index
-
 MPC.index Modified Partition Coeeficient
 
 CE.index Classification Entropy
@@ -23,13 +21,14 @@ Validation Index of Fuzzy Clustering
 }
 \details{
 This function provide validation index that calculated from fuzzy clustering
-result. There are 4 index that calculated, Xie Beni, MPC, and CE index. Both three indexes
+result. There are 3 index that calculated, Xie Beni, MPC, and CE index. Both three indexes
 calculated from fuzzy membership and data point.
 
 Xie Beni index calculated compactness and separation of clustering.
 
-Kwon index extended Xie Beni index to eliminate its tendency to monotonically decrease when number of cluster approach the number of data point.
-
 The best cluster result can be decided with minimum value of index.
+}
+\references{
+Wang, W., & Zhang, Y. (2007). On Fuzzy Cluster Validity Indices. Fuzzy Sets and System, 2095-2117.
 }
 

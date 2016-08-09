@@ -16,4 +16,7 @@ data.cluster Dataset with chosen variables
 This function used to construct data for clustering from
 dataset with chosen variables.
 }
+\details{
+Don't use it from user.
+}
 

@@ -1,5 +1,6 @@
 #' Result GUI
 #' @description Result GUI
+#' @details Not run by users
 #' @param parent parent window
 #' @param cluster cluster object
 #' @param valid validation index object
@@ -73,49 +74,11 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   pp <- ncol(cluster$Clust.desc)
 
   ####-> Prepare PCA Data and Plotting
-  ploting <- function() {
-    data.clu <- cluster$Clust.desc[,1:pp - 1]
-    data.PCA <- prcomp(data.clu,scale. = T)
-    z1 <- as.data.frame(cbind(data.PCA$x[,1:2],cluster$Clust.desc[,pp]))
-
-    windowsFonts(A=windowsFont("Gentium Basic"))
-
-    datapc <- data.frame(varnames=rownames(data.PCA$rotation),
-                         data.PCA$rotation)
-    mult <- min(
-      (max(z1[,"PC1"]) - min(z1[,"PC1"])/(max(datapc[,"PC1"])-min(datapc[,"PC1"]))),
-      (max(z1[,"PC2"]) - min(z1[,"PC2"])/(max(datapc[,"PC2"])-min(datapc[,"PC2"])))
-    )
-
-    datapc <- transform(datapc,
-                        v1 = .7 * mult * (get("PC1")),
-                        v2 = .7 * mult * (get("PC2"))
-    )
-
-    ggplot(z1,
-           aes(x = PC1,y = PC2,color=factor(V3))) +
-      geom_point() +
-      labs(color="Cluster")+
-      xlab(paste("PC 1 \nVariance Explained: ",
-                 round(summary(data.PCA)$importance[2,1] *100,2),"%")) +
-      ylab(paste("PC 2 \nVariance Explained: ",
-                 round(summary(data.PCA)$importance[2,2] *100,2),"%"))+
-      theme_bw(base_size = 10,base_family = "A")+
-      coord_equal(ratio = 1)+
-      geom_text(data=datapc, aes(x=v1, y=v2, label=varnames),
-                size = 3, vjust=1, color="navy",check_overlap = F)+
-      geom_segment(data=datapc, aes(x=0, y=0, xend=v1, yend=v2),
-                   arrow=arrow(length=unit(0.3,"cm")), color="navy")-> pl
-    pl<-pl+
-      geom_text(data=z1,aes(x=PC1,y=PC2,color=factor(V3),label=rownames(z1)),
-                check_overlap = F,size=3)
-    eval(substitute(print(pl)))
-  }
-  tkrplotClus<-function(parent,fun){
+  tkrplotClus<-function(parent,fun,param){
     image <- paste("Rplot", .make.tkindex(), sep = "")
     win.metafile(width = 3, height = 3, restoreConsole = FALSE)
     .my.tkdev(1.3, 1.3)
-    try(fun())
+    try(fun(param))
     .Tcl(paste("image create Rplot", image))
     lab <- tk2label(parent, image = image)
     tcltk::tkpack.propagate(lab,F)
@@ -123,10 +86,11 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
                                                    image)))
     lab$image <- image
     lab$fun <- fun
+    lab$param<-param
     lab
   }
   clusplot <- tkrplotClus(
-    biplot.panel, fun = ploting)
+    biplot.panel, fun = biploting,param=cluster)
 
   tcltk::tkgrid(biplot.label.panel,sticky="w")
   tcltk::tkgrid(
@@ -247,44 +211,11 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   )
   tcltk::tkconfigure(V.table, selectmode = "extended",
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
-  radar.plotting<-function(){
-    x.mean<- apply(cluster$Clust.desc[,1:(pp-1)],2,mean)
-    x.sd<-apply(cluster$Clust.desc[,1:(pp-1)],2,sd)
-    as.data.frame(cluster$V)->Centro
-    paste("Cluster ",1:nrow(Centro))->rownames(Centro)
-    Centro<-as.data.frame(t(apply(Centro,1,function(x){(x-x.mean)/(x.sd)})))
-    Centro$Cluster<-paste("Cluster ",1:nrow(Centro))
-    Centromelted<-reshape2::melt(Centro)
-    coord_radar <- function (theta = "x", start = 0, direction = 1)
-    {
-      theta <- match.arg(theta, c("x", "y"))
-      r <- if (theta == "x")
-        "y"
-      else "x"
-      ggproto("CordRadar", CoordPolar, theta = theta, r = r, start = start,
-              direction = sign(direction),
-              is_linear = function(coord) TRUE)
-    }
-    dataLab<-as.data.frame(cbind(rep(0,5),c(-1,-.5,0,.5,1)))
-    ggplot(Centromelted, aes(x = variable, y = value)) +
-      geom_polygon(aes(group = Cluster, color = Cluster), fill = NA, size = 1, show.legend = F) +
-      geom_line(aes(group = Cluster, color = Cluster), size = 1) +
-      theme(strip.text.x = element_text(size = 8),
-            axis.text.x = element_text(size =8),
-            axis.ticks.y = element_blank(),
-            axis.text.y = element_blank(),
-            panel.grid.major=element_line(color="grey",size = .5),
-            panel.background=element_rect(fill="white")) +
-      xlab("") + ylab("") + geom_text(data=dataLab,aes(x=V1,y=V2,label=V2))+
-      guides(color = guide_legend(ncol=1)) +
-      coord_radar()->radar
-    eval(substitute(print(radar)))
-  }
-  tkrplotRadar<-function(parent,fun){
+  tkrplotRadar<-function(parent,fun,param){
     image <- paste("Rplot", .make.tkindex(), sep = "")
     win.metafile(width = 3, height = 3, restoreConsole = FALSE)
     .my.tkdev(1, 1)
-    try(fun())
+    try(fun(param))
     .Tcl(paste("image create Rplot", image))
     lab <- tk2label(parent, image = image)
     tcltk::tkpack.propagate(lab,F)
@@ -292,10 +223,11 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
                                                    image)))
     lab$image <- image
     lab$fun <- fun
+    lab$param<-param
     lab
   }
   radarplot <- tkrplotRadar(
-    fuzzy.centroid.panel, fun = radar.plotting)
+    fuzzy.centroid.panel, fun = radar.plotting,param=cluster)
   tcltk::tkgrid(fuzzy.centroid.panel.label,sticky="w")
   tcltk::tkgrid(radarplot,pady = c(0,0),padx = 5,columnspan=2)
   tcltk::tkgrid(
@@ -321,10 +253,10 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   )
   tclValid <- tcltk::tclArray()
 
-  mat.val <- c("Index Value",valid[1],valid[2],valid[3])
+  mat.val <- c("Index Value",valid[1],valid[2],valid[3],valid[4])
   mat.val <- as.matrix(mat.val)
   mat.val <-
-    cbind(c("Index Name","MPC Index","CE Index","XB index"),mat.val)
+    cbind(c("Index Name","MPC Index","CE Index","XB index","S Index"),mat.val)
   for (i in 1:nrow(mat.val))
     for (j in 1:ncol(mat.val)){
       if (i < 2)
@@ -337,7 +269,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     tk2table(
       validation.panel, variable = tclValid,
       titlerows = 1,titlecols = 1, width =
-        2,height = 4,rows = nrow(mat.val),cols = ncol(mat.val),selectmode = "extended", colwidth = 15, background = "white"
+        2,height = 5,rows = nrow(mat.val),cols = ncol(mat.val),selectmode = "extended", colwidth = 15, background = "white"
     )
   tcltk::tkgrid(
     Valid.table,sticky = "w"
@@ -393,10 +325,10 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     cluster.fuzzy<-list(cluster,valid,manov)
     save(cluster.fuzzy,file="cluster.Rda")
     png("Biplot.png")
-    ploting()
+    biploting(cluster)
     dev.off()
     png("Radar.png")
-    radar.plotting()
+    radar.plotting(cluster)
     dev.off()
     Try <- function(expr) {
       res <- try(expr, silent = TRUE)

@@ -57,4 +57,11 @@ with covariance of data. Tuning parameter determine proportion of covariance dat
 that will be used to estimate new covariance cluster. Beside improving via tuning, Basbuka improve
 the algorithm with decomposition of covariance so it will become non singular matrix.
 }
+\references{
+Babuska, R., Veen, P. v., & Kaymak, U. (2002). Improved Covarians Estimation for Gustafson Kessel Clustering. IEEE, 1081-1084.
+
+Balasko, B., Abonyi, J., & Feil, B. (2002). Fuzzy Clustering and Data Analysis Toolbox: For Use with Matlab. Veszprem, Hungary.
+
+Gustafson, D. E., & Kessel, W. C. (1978). Fuzzy Clustering With A Fuzzy Covariance Matrix. 761-766.
+}
 

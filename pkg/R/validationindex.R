@@ -3,17 +3,15 @@
 #' @param cluster Cluster Result from Fuzzy Clustering
 #'
 #' @return XB.index Xie Beni index
-#' @return K.index Kwon index
 #' @return MPC.index Modified Partition Coeeficient
 #' @return CE.index Classification Entropy
 #'
 #' @details This function provide validation index that calculated from fuzzy clustering
-#' result. There are 4 index that calculated, Xie Beni, MPC, and CE index. Both three indexes
+#' result. There are 3 index that calculated, Xie Beni, MPC, and CE index. Both three indexes
 #' calculated from fuzzy membership and data point.
 #' @details Xie Beni index calculated compactness and separation of clustering.
-#' @details Kwon index extended Xie Beni index to eliminate its tendency to monotonically decrease when number of cluster approach the number of data point.
 #' @details The best cluster result can be decided with minimum value of index.
-#'
+#' @references Wang, W., & Zhang, Y. (2007). On Fuzzy Cluster Validity Indices. Fuzzy Sets and System, 2095-2117.
 #' @export
 validation.index<-function(cluster){
   n<-nrow(cluster$Clust.desc)
@@ -65,7 +63,7 @@ validation.index<-function(cluster){
       S.index<-sum(S.temp1)/(S.min*n)
   },silent=T)
 
-  validation<-c(MPC.index,CE.index,XB.index)
+  validation<-c(MPC.index,CE.index,XB.index,S.index)
   class(validation)<-"validation"
   validation
   return(validation)
@@ -77,5 +75,6 @@ print.validation<-function(x,...){
   cat("\nMPC Index\t:",x[1])
   cat("\nCE Index\t:",x[2])
   cat("\nXB Index\t:",x[3])
+  cat("\nS Index \t:",x[4])
 }
 

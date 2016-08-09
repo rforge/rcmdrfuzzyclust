@@ -1,6 +1,11 @@
 #' Soft Voting Cluster Ensemble
 #'
-#' @description This function used to perform Soft Voting Cluster Ensemble
+#' @description This function used to perform Soft Voting Cluster Ensemble.
+#' @details Soft vote cluster ensemble used to stabilize the result of cluster analysis. It can be define combine several result of clustering
+#' to be one robust result.
+#' @details The simple method of ensemble is voting method, vote label that resulted and use maximum
+#' number of voting as partition. For fuzzy clustering, voting method use membership matrix. This function implemented voting method with sum rule approach.
+#' For standarize the label, this function use hungary algorithm for optimal labelization.
 #'
 #' @param data data frame nxp
 #' @param K specific number of cluster (must be >1)
@@ -11,6 +16,7 @@
 #' @param gamma parameter of Gustafson Kessel Clustering
 #' @param method fuzzy clustering method that will be used ("FCM" or "GK")
 #' @param rho parameter of volume clustering in Gustafson Kessel Clustering
+#' @param core number of core that used for parallelization
 #'
 #' @return func.obj objective function that calculated.
 #' @return U matrix n x K consist fuzzy membership matrix
@@ -20,7 +26,7 @@
 #' @return seeding list of random number that used as seeding
 #' @return Call call argument
 #'
-#' @details This function perform Soft Voting Cluster Ensemble algorithm
+#' @references Sevillano, X., Alias, F., & Socoro, J. C. (2013). Posisional and Confidence voting-based Consensus Function For Fuzzy Cluster Ensemble. Fuzzy Sets and System, 1-40.
 #'
 #' @export
 #' @import clue
@@ -37,10 +43,11 @@ soft.vote.ensemble<-function(data,
                              gamma=0,
                              rho=rep(1,K),
                              threshold=10^-5,
-                             max.iteration=100)
+                             max.iteration=100,
+                             core)
 {
   numb.seed<-seq(1:seed)
-  seeding<-sample(seq(1,100),seed)
+  seeding<-sample(seq(1,10000),seed)
   fuzzy.CM.parallel<-function(X,K,m,RandomNumber){
     fuzzy.CM(X,K,m,RandomNumber = RandomNumber,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
@@ -49,8 +56,14 @@ soft.vote.ensemble<-function(data,
     fuzzy.GK(X,K,m,RandomNumber = RandomNumber,gamma=gamma,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
   }
-
-  cl<-makeCluster(detectCores()-1)
+  if(missing(core)){
+    cl<-detectCores()-1
+  } else if(core > (detectCores()-1)){
+    cl<-detectCores()-1
+  } else {
+    cl<-core
+  }
+  cl<-makeCluster(cl)
   registerDoParallel(cl)
   if(method=="FCM"){
     system.time(

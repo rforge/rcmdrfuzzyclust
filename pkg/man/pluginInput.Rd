@@ -10,5 +10,7 @@ pluginInput()
 Graphical User Interface on Rcmdr Plugin.
 This Plugin provide Interface to select variables of dataset that will be
 used for Fuzzy Clustering, methods selection, and parameter specification
+
+Never use it before open Rcmdr. Its preferable to use plugin menu on Rcmdr
 }
 

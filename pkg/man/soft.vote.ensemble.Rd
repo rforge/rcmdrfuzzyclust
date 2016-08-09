@@ -5,7 +5,7 @@
 \title{Soft Voting Cluster Ensemble}
 \usage{
 soft.vote.ensemble(data, seed, method = "FCM", K = 2, m = 2, gamma = 0,
-  rho = rep(1, K), threshold = 10^-5, max.iteration = 100)
+  rho = rep(1, K), threshold = 10^-5, max.iteration = 100, core)
 }
 \arguments{
 \item{data}{data frame nxp}
@@ -25,6 +25,8 @@ soft.vote.ensemble(data, seed, method = "FCM", K = 2, m = 2, gamma = 0,
 \item{threshold}{threshold of convergence}
 
 \item{max.iteration}{maximum iteration to convergence}
+
+\item{core}{number of core that used for parallelization}
 }
 \value{
 func.obj objective function that calculated.
@@ -42,9 +44,17 @@ seeding list of random number that used as seeding
 Call call argument
 }
 \description{
-This function used to perform Soft Voting Cluster Ensemble
+This function used to perform Soft Voting Cluster Ensemble.
 }
 \details{
-This function perform Soft Voting Cluster Ensemble algorithm
+Soft vote cluster ensemble used to stabilize the result of cluster analysis. It can be define combine several result of clustering
+to be one robust result.
+
+The simple method of ensemble is voting method, vote label that resulted and use maximum
+number of voting as partition. For fuzzy clustering, voting method use membership matrix. This function implemented voting method with sum rule approach.
+For standarize the label, this function use hungary algorithm for optimal labelization.
+}
+\references{
+Sevillano, X., Alias, F., & Socoro, J. C. (2013). Posisional and Confidence voting-based Consensus Function For Fuzzy Cluster Ensemble. Fuzzy Sets and System, 1-40.
 }
 

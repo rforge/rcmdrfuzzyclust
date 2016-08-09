@@ -2,6 +2,7 @@
 #'
 #' @description This function used to construct data for clustering from
 #' dataset with chosen variables.
+#' @details Don't use it from user.
 #' @param var.choice Chosen Variables of Dataset
 #' @return data.cluster Dataset with chosen variables
 #' @export

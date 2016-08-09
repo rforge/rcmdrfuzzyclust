@@ -2,11 +2,13 @@
 
 S3method(print,fuzzyclust)
 S3method(print,validation)
+export(biploting)
 export(checkManova)
 export(fuzzy.CM)
 export(fuzzy.GK)
 export(managedata)
 export(pluginInput)
+export(radar.plotting)
 export(result.GUI)
 export(soft.vote.ensemble)
 export(validation.index)

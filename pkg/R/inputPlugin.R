@@ -3,6 +3,8 @@
 #' @description Graphical User Interface on Rcmdr Plugin.
 #' This Plugin provide Interface to select variables of dataset that will be
 #' used for Fuzzy Clustering, methods selection, and parameter specification
+#'
+#' Never use it before open Rcmdr. Its preferable to use plugin menu on Rcmdr
 #' @export
 #' @import tcltk2
 #' @import Rcmdr
@@ -138,7 +140,9 @@ pluginInput <- function() {
   ensemble.cek <- tk2checkbutton(win1$frame2,
                                  variable = ensemble.cek.value)
   n.ensemble <-
-    tk2spinbox(win1$frame2,width = 5,value = seq(10,100,by = 10))
+    tk2spinbox(win1$frame2,width = 5,value = seq(3,100,by = 1))
+  helpButton <- tk2button(win1$frame2,text = "Help",width = "10")
+
   tcltk::tkgrid(
     tk2label(
       win1$frame2, text = "N Cluster:", justify = "left",
@@ -183,6 +187,7 @@ pluginInput <- function() {
       win1$frame2,text = "N ensemble:",justify = "left",font = fontCommands
     ),
     n.ensemble,
+    helpButton,
     padx = 10,pady = c(5,5),sticky = "W"
   )
   method <- tcltk::tclVar("Fuzzy C-Means")
@@ -194,7 +199,7 @@ pluginInput <- function() {
   tcltk::tkconfigure(fuzzifier.param, textvariable = method.fuzzifier)
   gamma.value <- tcltk::tclVar("0")
   tcltk::tkconfigure(gamma.param,textvariable = gamma.value)
-  ensemble.seed <- tcltk::tclVar("10")
+  ensemble.seed <- tcltk::tclVar("3")
   tcltk::tkconfigure(n.ensemble,textvariable = ensemble.seed)
 
   tk2state.set(gamma.param,"disabled")
@@ -221,6 +226,7 @@ pluginInput <- function() {
     win1$frame3,padx = 0,pady = c(0,0),row = 3,column = 0,sticky = "w"
   )
   nextButton <- tk2button(win1$frame3,text = "Go>>",width = "10")
+
   statuslabel <- tk2label(win1$frame3,text = "STATUS: - ",
                           font = fontCommands,
                           justify = "left")
@@ -238,6 +244,10 @@ pluginInput <- function() {
     column = 1,sticky = "w",
     pady = c(0,5)
   )
+  on.hepl<-function(){
+    browseURL(paste(path.package(package="rcmdrfuzzyclust"),"/doc/fuzzyrcmdrplugin.html",sep=""))
+    cat("\nHelp")
+  }
   on.next <- function() {
     tcltk::tcl("update")
     for (i in var.choice)
@@ -324,5 +334,7 @@ pluginInput <- function() {
   tcltk::tcl("ttk::style", "configure","TPanedwindow", background = "white")
   tcltk::tcl("ttk::style", "configure","TProgressbar", troughcolor = "blue")
   tcltk::tkconfigure(nextButton,command = on.next)
+  tcltk::tkconfigure(helpButton,command=on.hepl)
+
   tcltk::tkfocus(win1)
 }

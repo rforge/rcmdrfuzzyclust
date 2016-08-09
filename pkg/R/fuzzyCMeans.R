@@ -27,6 +27,10 @@
 #' calculating mathematical distance. Fuzzy C-Means calculate distance with Euclideans norm. So it can be said that cluster
 #' will have sperichal shape of geometry.
 #'
+#' @references Balasko, B., Abonyi, J., & Feil, B. (2002). Fuzzy Clustering and Data Analysis Toolbox: For Use with Matlab. Veszprem, Hungary.
+#' @references Gustafson, D. E., & Kessel, W. C. (1978). Fuzzy Clustering With A Fuzzy Covariance Matrix. 761-766.
+#' @references Bezdek, J. C., Ehrlich, R., & Full, W. (1984). FCM: The Fuzzy C-Means Clustering Algorithm. Computers and Geosciences Vol 10, 191-203
+#'
 #' @export
 fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
                      RandomNumber=0) {

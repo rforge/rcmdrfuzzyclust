@@ -1,0 +1,77 @@
+---
+title: "Rcmdr Fuzzy Clustering Plugin Analysis"
+author: "Achmad Fauzi bagus F"
+date: "August 9th, 2016"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Rcmdr Fuzzy Clustering Plugin Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+This package provide plug-in for fuzzy clustering analysis via Rcmdr. Although it's plugin package, you can easy analyze via command line/console on your R. 
+
+This package consist Fuzzy C-Means and Gustafson Kessel Clustering. For stability, use ensemble with vote approach. Optimal cluster via validation index, and manova analysis via Pillai Statistic. Visualize your object with biplot and radar plot.
+
+## Configuratio to Rcmdr
+
+install this package first. And then type `library(Rcmdr)` to launch R commander aplication. On Tools menu choose "load plugin" and choose `rcmdrfuzzyclust`. It will restart the R Commander application.
+
+Insert your data and perform your analysis from Statistics -> Dimensional -> Clustering -> Fuzzy Clustering. 
+
+## Fuzzy C-Means
+
+`fuzzy.CM()` perform fuzzy c-means analysis. More description of this function (parameter setting, description, and return value) explained via `?fuzzy.CM`
+
+```{r, echo=T}
+library(rcmdrfuzzyclust)
+data(iris)
+fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+```
+
+## Gustafson Kessel
+
+`fuzzy.GK()` perform Gustafson Kessel clustering. The main differences of this method with fuzzy c-means is the distance function. GK use covarians matrix and FCM use Euclideans distances. 
+And this function implemented the modification of GK algorithm that invented by Babuska (2002). Details and parameter use `?fuzzy.GK()`
+
+```{r, echo=T}
+data(iris)
+fuzzy.GK(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234,gamma=0)->cl
+```
+
+## Soft Vote Ensemble
+
+GK and FCM use randomization for initialize the membership matrix. So for stabilize the result this package provide ensemble clustering with SUM RULE Voting aproach. Details use `?soft.vote.ensemble`
+
+```{r, echo=T}
+soft.vote.ensemble(iris[,1:4],seed=3,method="FCM",K=3,m=2,core=1)->Cl
+```
+
+## Validation
+
+The hardest question of clustering analysis is validation technique. This package provide several index that can be use to validate your result.
+
+```{r, echo=T}
+fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+validation.index(cl)
+```
+
+## MANOVA Analysis
+
+For analysis to proof there is a significant differences among cluster use MANOVA analysis. The statistic pillai is chosen cause the robustness for assumption.
+
+```{r, echo=TRUE}
+checkManova(cl)
+```
+
+## Visualize your result
+
+Visualize your result with biplot and radar plot for easy interpretation your cluster result.
+
+```{r, echo=TRUE,fig.show='hold'}
+biploting(cl) -> biplotcluster
+```
+
+```{r, echo=TRUE,fig.show='hold'}
+radar.plotting(cl) ->radarplot
+```
