@@ -10,7 +10,7 @@ biploting <- function(cluster) {
   data.PCA <- prcomp(data.clu,scale. = T)
   z1 <- as.data.frame(cbind(data.PCA$x[,1:2],cluster$Clust.desc[,pp]))
 
-  windowsFonts(A=windowsFont("Gentium Basic"))
+  grDevices::windowsFonts(A=windowsFont("Gentium Basic"))
 
   datapc <- data.frame(varnames=rownames(data.PCA$rotation),
                        data.PCA$rotation)
