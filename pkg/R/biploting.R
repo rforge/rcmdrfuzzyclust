@@ -10,7 +10,6 @@ biploting <- function(cluster) {
   data.PCA <- prcomp(data.clu,scale. = T)
   z1 <- as.data.frame(cbind(data.PCA$x[,1:2],cluster$Clust.desc[,pp]))
 
-  grDevices::windowsFonts(A=windowsFont("Gentium Basic"))
 
   datapc <- data.frame(varnames=rownames(data.PCA$rotation),
                        data.PCA$rotation)
@@ -32,7 +31,7 @@ biploting <- function(cluster) {
                round(summary(data.PCA)$importance[2,1] *100,2),"%")) +
     ylab(paste("PC 2 \nVariance Explained: ",
                round(summary(data.PCA)$importance[2,2] *100,2),"%"))+
-    theme_bw(base_size = 10,base_family = "A")+
+    theme_bw(base_size = 10)+
     coord_equal(ratio = 1)+
     geom_text(data=datapc, aes(x=v1, y=v2, label=varnames),
               size = 3, vjust=1, color="navy",check_overlap = F)+
