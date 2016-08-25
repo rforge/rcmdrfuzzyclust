@@ -27,7 +27,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     weight = "bold",slant = "italic"
   )
   resultlabel <-
-    paste("Fuzzy Clustering Analysis\nMethod:",method)
+    paste("Fuzzy Clustering Analysis")
   tcltk::tkgrid(
     tk2label(
       result,text = resultlabel,font =
@@ -35,17 +35,25 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     ),row = 0,column = 0,pady = c(5,5),padx = 5,
     columnspan=2
   )
+  methodlabel<-paste("Methods: ",method,sep="")
+  cat(methodlabel)
+  tcltk::tkgrid(
+    tk2label(result,text = methodlabel,font =
+        fontTitle
+    ),row = 1,column = 0,pady = c(5,5),padx = 5,
+    columnspan=2
+  )
   result$option<-tk2frame(result,borderwidth =1, relief="flat")
   result$output<-tk2frame(result,borderwidth=2,relief="solid",width=625,height=500)
   tcltk::tkgrid(result$option,
          pady=5,padx=5,sticky="nw")
-  tcltk::tkgrid.configure(result$output,column=1,row=1,padx=5,pady=5)
+  tcltk::tkgrid.configure(result$output,column=1,row=2,padx=5,pady=5)
   tcltk::tkgrid.propagate(result$output,F)
 
   option.list <- tk2listbox(result$option, height = 8,width=30,
                             selectmode = "single",relief="solid",scroll="none")
   tcltk::tkgrid(tk2label(result$option,
-                  text = "Output Choices:", justify = "left",font=fontLabel),
+                  text = "Output Choices:\n(Double Click)", justify = "left",font=fontLabel),
          padx = 5, pady =c(5, 5), sticky = "w")
   result$output$panel<-tk2panedwindow(result$output,orientation = "vertical")
   tcltk::tkgrid(option.list, padx = 5, pady = c(5, 5),sticky="w")
@@ -229,6 +237,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   radarplot <- tkrplotRadar(
     fuzzy.centroid.panel, fun = radar.plotting,param=cluster)
   tcltk::tkgrid(fuzzy.centroid.panel.label,sticky="w")
+  tcltk::tkgrid(fuzzy.centroid.label,sticky="w")
   tcltk::tkgrid(radarplot,pady = c(0,0),padx = 5,columnspan=2)
   tcltk::tkgrid(
     V.table,Vyscr,sticky = "w",padx = 5,pady =

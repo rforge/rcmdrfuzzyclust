@@ -84,8 +84,8 @@ fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
     for (i in 1:n)
     {
       U[i,] <- 1 /
-        (((D[i,]+10^-10) ^ (1 / (m - 1))) *
-           sum((1 / (D[i,]+10^-10)) ^ (1 /(m - 1))))
+        (((D[i,]) ^ (1 / (m - 1))) *
+           sum((1 / (D[i,])) ^ (1 /(m - 1))))
     }
     if(any(is.na(U))==T||any(is.infinite(U))==T)
     {

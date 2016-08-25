@@ -47,7 +47,7 @@ soft.vote.ensemble<-function(data,
                              core)
 {
   numb.seed<-seq(1:seed)
-  seeding<-sample(seq(1,10000),seed)
+  seeding<-sample(seq(1,100),seed)
   fuzzy.CM.parallel<-function(X,K,m,RandomNumber){
     fuzzy.CM(X,K,m,RandomNumber = RandomNumber,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
@@ -92,8 +92,10 @@ soft.vote.ensemble<-function(data,
     attr(result, "assignmentMatrix") <- assignmentMatrix
     return(result)
   }
+
   standar<-clu.par[1,1][[1]]
-  for(i in numb.seed[-1])
+  i<-2
+  while(i < seed)
   {
     minWeightBipartiteMatching(clu.par[i,1][[1]],standar)->matching
     clu.par[i,2][[1]]->clusterA
@@ -105,7 +107,9 @@ soft.vote.ensemble<-function(data,
       U.temp[,j]=U.temp2[,tmp[j]]
     }
     clu.par[i,1][[1]]<-U.temp
+    i<-i+1
   }
+  i<-2
   U.ensemble<-clu.par[1,1][[1]]
   for(i in 2:seed)
     U.ensemble<-U.ensemble+clu.par[i,1][[1]]

@@ -1,5 +1,5 @@
 
-#' Scaled Data of Education Variables on East Java Indonesia 2014
+#' Data of Education Variables on East Java Indonesia 2014
 #'
 #' A dataset containing the scaled data of Education Variables in Eeast Java, Indonesia 2014
 #'
