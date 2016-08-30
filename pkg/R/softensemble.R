@@ -46,8 +46,11 @@ soft.vote.ensemble<-function(data,
                              max.iteration=100,
                              core)
 {
-  numb.seed<-seq(1:seed)
+  #Make an seeding
+  #So will be difference each simulation
   seeding<-sample(seq(1,100),seed)
+
+  #fuzzy parallel
   fuzzy.CM.parallel<-function(X,K,m,RandomNumber){
     fuzzy.CM(X,K,m,RandomNumber = RandomNumber,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
@@ -56,6 +59,8 @@ soft.vote.ensemble<-function(data,
     fuzzy.GK(X,K,m,RandomNumber = RandomNumber,gamma=gamma,threshold = threshold,max.iteration=max.iteration)->clus
     return(list(clus$U,clus$Clust.desc[,ncol(clus$Clust.desc)]))
   }
+
+  #configuration core for parallel programming
   if(missing(core)){
     cl<-detectCores()-1
   } else if(core > (detectCores()-1)){
@@ -65,6 +70,8 @@ soft.vote.ensemble<-function(data,
   }
   cl<-makeCluster(cl)
   registerDoParallel(cl)
+
+  #FCM and GK simulation process
   if(method=="FCM"){
     system.time(
       clu.par <-
@@ -78,6 +85,8 @@ soft.vote.ensemble<-function(data,
         fuzzy.GK.parallel(data,K,m,s,gamma)
       })
   }
+
+  #Standar labeling function
   rownames(clu.par)<-NULL
   minWeightBipartiteMatching <- function(clusteringA, clusteringB) {
     nA <- nrow(clusteringA)  # number of instances in a
@@ -93,30 +102,44 @@ soft.vote.ensemble<-function(data,
     return(result)
   }
 
+  #First result as standard
+  #Clu.par contain matrix U and labeling vector
   standar<-clu.par[1,1][[1]]
   i<-2
-  while(i < seed)
+
+  #standarization the label
+  while(i <= seed)
   {
     minWeightBipartiteMatching(clu.par[i,1][[1]],standar)->matching
     clu.par[i,2][[1]]->clusterA
-    tmp <- sapply(1:length(matching), function(i) {
-      clusterA[which(clu.par[i,2][[1]] == i)] <<- matching[i]
+    #changing the label
+    #tmp-> vector list label
+    tmp <- sapply(1:length(matching), function(y) {
+      clusterA[which(clu.par[i,2][[1]] == y)] <<- matching[y]
     })
-    U.temp<-U.temp2<-clu.par[i,1][[1]]
+
+    U.temp2<-clu.par[i,1][[1]]
+    U.temp<-U.temp2
+
+    #labeling the partition label
     for(j in 1:length(tmp)){
       U.temp[,j]=U.temp2[,tmp[j]]
     }
+
     clu.par[i,1][[1]]<-U.temp
     i<-i+1
   }
   i<-2
+  #Consensus step
   U.ensemble<-clu.par[1,1][[1]]
   for(i in 2:seed)
     U.ensemble<-U.ensemble+clu.par[i,1][[1]]
-  #edit U
+  #edit U to satisfy U condition
   U.ensemble<-U.ensemble/rowSums(U.ensemble)
+
   data<-as.matrix(data)
   p<-ncol(data)
+  #Calculate V D
   V.ensemble <- t(U.ensemble ^ m) %*% data / colSums(U.ensemble ^ m)
   if(method=="FCM"){
     D<-matrix(0,nrow=nrow(data),ncol=K)
@@ -155,6 +178,7 @@ soft.vote.ensemble<-function(data,
           (data[i,] -V.ensemble[k,])
       }}
   }
+
   Clust.desc <- matrix(0,nrow(data),p + 1)
   rownames(Clust.desc) <- rownames(data)
   colnames(Clust.desc) <- c(colnames(data),"cluster")

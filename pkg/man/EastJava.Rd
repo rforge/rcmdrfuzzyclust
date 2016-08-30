@@ -3,7 +3,7 @@
 \docType{data}
 \name{EastJava}
 \alias{EastJava}
-\title{Scaled Data of Education Variables on East Java Indonesia 2014}
+\title{Data of Education Variables on East Java Indonesia 2014}
 \format{A data frame with 38 rows and 12 variables:
 \describe{
   \item{V1}{Proportion of human that illiterate among 100 people, in proportion per 100 people}
