@@ -39,6 +39,7 @@
 #' @references Gustafson, D. E., & Kessel, W. C. (1978). Fuzzy Clustering With A Fuzzy Covariance Matrix. 761-766.
 #' @export
 #' @import MASS
+#' @importFrom stats cov runif
 fuzzy.GK<-function(X,K=2,m=1.5,max.iteration=100,
                          threshold=10^-5,RandomNumber=0,rho=rep(1,K),
                          gamma=0) {

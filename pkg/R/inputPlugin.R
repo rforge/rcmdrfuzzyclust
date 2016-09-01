@@ -8,18 +8,21 @@
 #' @export
 #' @import tcltk2
 #' @import Rcmdr
+#' @importFrom  utils browseURL
 pluginInput <- function() {
   #--------------------------#
   #  DATASET                 #
   #--------------------------#
-  doItAndPrint(paste("dataset<<-as.data.frame(",ActiveDataSet(),")"))
-  justDoIt(paste("variable <<- colnames(dataset)"))
-  justDoIt(paste("var.choice<<-c()"))
-  justDoIt(paste("data.cluster<<-matrix(nrow=nrow(dataset))"))
-  justDoIt(paste("cluster<<-list()"))
-  justDoIt(paste("manov<<-list()"))
-  justDoIt(paste("valid<<-list()"))
+  dataset<-as.data.frame(eval(parse(text=activeDataSet())))
 
+  variable <- colnames(dataset)
+  var.remo.choice<-var.choice<-c()
+  data.cluster<-matrix(nrow=nrow(dataset))
+  cluster<-list()
+  manov<-list()
+  valid<-list()
+  dataset<-as.data.frame(eval(parse(text=activeDataSet())))
+  head(dataset)
   #--------------------------#
   #  INTERFACE               #
   #--------------------------#

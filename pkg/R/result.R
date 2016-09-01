@@ -12,6 +12,7 @@
 #' @import tcltk2
 #' @import tkrplot
 #' @import Rcmdr
+#' @importFrom grDevices dev.off png dev.new
 result.GUI <- function(parent,cluster,valid,manov,method) {
   result <- tcltk::tktoplevel(background = "white")
   tcltk::tktitle(result) <- "Result"
@@ -84,7 +85,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
   ####-> Prepare PCA Data and Plotting
   tkrplotClus<-function(parent,fun,param){
     image <- paste("Rplot", .make.tkindex(), sep = "")
-    win.metafile(width = 3, height = 3, restoreConsole = FALSE)
+    dev.new(width = 3, height = 3, restoreConsole = FALSE)
     .my.tkdev(1.3, 1.3)
     try(fun(param))
     .Tcl(paste("image create Rplot", image))
@@ -96,6 +97,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     lab$fun <- fun
     lab$param<-param
     lab
+
   }
   clusplot <- tkrplotClus(
     biplot.panel, fun = biploting,param=cluster)
@@ -221,7 +223,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
               rowseparator = "\"\n\"", colseparator = "\"\t\"")
   tkrplotRadar<-function(parent,fun,param){
     image <- paste("Rplot", .make.tkindex(), sep = "")
-    win.metafile(width = 3, height = 3, restoreConsole = FALSE)
+    dev.new(width = 3, height = 3, restoreConsole = FALSE)
     .my.tkdev(1, 1)
     try(fun(param))
     .Tcl(paste("image create Rplot", image))
@@ -233,6 +235,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
     lab$fun <- fun
     lab$param<-param
     lab
+
   }
   radarplot <- tkrplotRadar(
     fuzzy.centroid.panel, fun = radar.plotting,param=cluster)

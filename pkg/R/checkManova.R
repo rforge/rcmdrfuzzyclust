@@ -2,6 +2,7 @@
 #' @description MANOVA analysis based on Pillai Statistic
 #' @param clust cluster object
 #' @return statistic of MANOVA
+#' @importFrom stats manova
 #' @export
 
 checkManova<-function(clust){

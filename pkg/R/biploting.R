@@ -3,6 +3,8 @@
 #' @param cluster a cluster object
 #' @return biplot a biplot
 #' @import ggplot2
+#'
+#' @importFrom stats cov manova prcomp runif sd
 #' @export
 biploting <- function(cluster) {
   pp <- ncol(cluster$Clust.desc)
@@ -22,7 +24,12 @@ biploting <- function(cluster) {
                       v1 = .7 * mult * (get("PC1")),
                       v2 = .7 * mult * (get("PC2"))
   )
-
+  PC1<-z1$PC1
+  PC2<-z1$PC2
+  V3<-z1$V3
+  v1<-datapc$v1
+  v2<-datapc$v2
+  varnames<-datapc$varnames
   ggplot(z1,
          aes(x = PC1,y = PC2,color=factor(V3))) +
     geom_point() +

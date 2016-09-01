@@ -1,5 +1,5 @@
 ## ---- echo=T-------------------------------------------------------------
-library(rcmdrfuzzyclust)
+library(RcmdrPlugin.FuzzyClust)
 data(iris)
 fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
 

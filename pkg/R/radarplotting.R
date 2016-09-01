@@ -4,6 +4,7 @@
 #' @return radarplot a radarplot
 #' @import ggplot2
 #' @import reshape2
+#' @importFrom stats sd
 #' @export
 radar.plotting<-function(cluster){
   pp <- ncol(cluster$Clust.desc)
@@ -25,9 +26,12 @@ radar.plotting<-function(cluster){
             is_linear = function(coord) TRUE)
   }
   dataLab<-as.data.frame(cbind(rep(0,5),c(-1,-.5,0,.5,1)))
-  ggplot(Centromelted, aes(x = variable, y = value)) +
-    geom_polygon(aes(group = Cluster, color = Cluster), fill = NA, size = 1, show.legend = F) +
-    geom_line(aes(group = Cluster, color = Cluster), size = 1) +
+  V1<-dataLab$V1
+  V2<-dataLab$V2
+
+  ggplot(Centromelted, aes_string(x = "variable", y = "value")) +
+    geom_polygon(aes_string(group = "Cluster", color = "Cluster"), fill = NA, size = 1, show.legend = F) +
+    geom_line(aes_string(group = "Cluster", color = "Cluster"), size = 1) +
     theme(strip.text.x = element_text(size = 8),
           axis.text.x = element_text(size =8),
           axis.ticks.y = element_blank(),

@@ -35,6 +35,7 @@
 #' @import doParallel
 #' @import iterators
 #' @import parallel
+#' @importFrom stats cov
 soft.vote.ensemble<-function(data,
                              seed,
                              method="FCM",
@@ -49,7 +50,6 @@ soft.vote.ensemble<-function(data,
   #Make an seeding
   #So will be difference each simulation
   seeding<-sample(seq(1,100),seed)
-
   #fuzzy parallel
   fuzzy.CM.parallel<-function(X,K,m,RandomNumber){
     fuzzy.CM(X,K,m,RandomNumber = RandomNumber,threshold = threshold,max.iteration=max.iteration)->clus
@@ -70,7 +70,7 @@ soft.vote.ensemble<-function(data,
   }
   cl<-makeCluster(cl)
   registerDoParallel(cl)
-
+  s<-0
   #FCM and GK simulation process
   if(method=="FCM"){
     system.time(

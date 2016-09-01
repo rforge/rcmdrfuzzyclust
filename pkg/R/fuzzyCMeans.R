@@ -32,6 +32,8 @@
 #' @references Bezdek, J. C., Ehrlich, R., & Full, W. (1984). FCM: The Fuzzy C-Means Clustering Algorithm. Computers and Geosciences Vol 10, 191-203
 #'
 #' @export
+#'
+#' @importFrom stats runif
 fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
                      RandomNumber=0) {
   ## Set data
