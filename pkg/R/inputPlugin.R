@@ -245,7 +245,7 @@ pluginInput <- function() {
     pady = c(0,5)
   )
   on.hepl<-function(){
-    browseURL(paste(path.package(package="rcmdrfuzzyclust"),"/doc/fuzzyrcmdrplugin.html",sep=""))
+    browseURL(paste(path.package(package="RcmdrPlugin.FuzzyClust"),"/doc/fuzzyrcmdrplugin.html",sep=""))
     cat("\nHelp")
   }
   on.next <- function() {

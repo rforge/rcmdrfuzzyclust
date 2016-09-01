@@ -348,7 +348,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
       }
       res
     }
-    rmd.report.path<-path.package(package="rcmdrfuzzyclust")
+    rmd.report.path<-path.package(package="RcmdrPlugin.FuzzyClust")
     rmd.report.path<-paste(rmd.report.path,"/Report.Rmd",sep="")
     file.copy(rmd.report.path,"Report.Rmd")
     Try(rmarkdown::render("Report.Rmd",output_file=paste(wdfirst,"/Report.docx",sep="")))
@@ -356,7 +356,7 @@ result.GUI <- function(parent,cluster,valid,manov,method) {
                         message = paste("Check Report.docx in",
                                         paste(wdfirst,
                                               "/Report.docx",sep=""),
-                                        "directory :)",sep=""),
+                                        "directory :)",sep=" "),
                                         icon = "info", type = "ok")
     setwd(wdfirst)
   }

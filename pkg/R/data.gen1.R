@@ -9,5 +9,5 @@
 #'   \item{V3}{Variable 3}
 #'   \item{LABEL}{Labeling factor}
 #' }
-#' @source generated via \code{\link{MASS::mvrnorm}}
+#' @source generated randomly
 "data.gen1"

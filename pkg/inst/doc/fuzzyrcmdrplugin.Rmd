@@ -15,7 +15,7 @@ This package consist Fuzzy C-Means and Gustafson Kessel Clustering. For stabilit
 
 ## Configuratio to Rcmdr
 
-install this package first. And then type `library(Rcmdr)` to launch R commander aplication. On Tools menu choose "load plugin" and choose `rcmdrfuzzyclust`. It will restart the R Commander application.
+install this package first. And then type `library(Rcmdr)` to launch R commander aplication. On Tools menu choose "load plugin" and choose `RcmdrPlugin.FuzzyClust`. It will restart the R Commander application.
 
 Insert your data and perform your analysis from Statistics -> Dimensional -> Clustering -> Fuzzy Clustering. 
 
@@ -24,7 +24,7 @@ Insert your data and perform your analysis from Statistics -> Dimensional -> Clu
 `fuzzy.CM()` perform fuzzy c-means analysis. More description of this function (parameter setting, description, and return value) explained via `?fuzzy.CM`
 
 ```{r, echo=T}
-library(rcmdrfuzzyclust)
+library(RcmdrPlugin.FuzzyClust)
 data(iris)
 fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
 ```

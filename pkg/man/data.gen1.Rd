@@ -12,7 +12,7 @@
   \item{LABEL}{Labeling factor}
 }}
 \source{
-generated via \code{\link{MASS::mvrnorm}}
+generated randomly
 }
 \usage{
 data.gen1

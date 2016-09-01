@@ -4,9 +4,9 @@
 #'
 #' @format A data frame with 30 rows and 3 variables:
 #' \describe{
-#'   \item{V1}{Variable 1}
+#'   \item{v1}{Variable 1}
 #'   \item{V2}{Variable 2}
 #'   \item{LABEL}{Labeling factor}
 #' }
-#' @source generated via \code{\link{MASS::mvrnorm}}
+#' @source generated randomly
 "data.gen3"

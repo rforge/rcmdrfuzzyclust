@@ -6,13 +6,13 @@
 \title{Data Generate 2}
 \format{A data frame with 40 rows and 4 variables:
 \describe{
-  \item{V1}{Variable 1}
+  \item{v1}{Variable 1}
   \item{V2}{Variable 2}
   \item{V3}{Variable 3}
   \item{LABEL}{Labeling factor}
 }}
 \source{
-generated via \code{\link{MASS::mvrnorm}}
+generated multiariate random
 }
 \usage{
 data.gen2
