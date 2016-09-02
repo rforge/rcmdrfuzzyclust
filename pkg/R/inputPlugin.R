@@ -22,7 +22,6 @@ pluginInput <- function() {
   manov<-list()
   valid<-list()
   dataset<-as.data.frame(eval(parse(text=activeDataSet())))
-  head(dataset)
   #--------------------------#
   #  INTERFACE               #
   #--------------------------#
