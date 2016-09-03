@@ -6,6 +6,11 @@
 #'
 #' @importFrom stats cov manova prcomp runif sd
 #' @export
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+#' biploting(cl)
+
 biploting <- function(cluster) {
   pp <- ncol(cluster$Clust.desc)
   data.clu <- cluster$Clust.desc[,1:pp - 1]

@@ -13,6 +13,11 @@
 #' @details The best cluster result can be decided with minimum value of index.
 #' @references Wang, W., & Zhang, Y. (2007). On Fuzzy Cluster Validity Indices. Fuzzy Sets and System, 2095-2117.
 #' @export
+#'
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+#' validation.index(cl)
 validation.index<-function(cluster){
   n<-nrow(cluster$Clust.desc)
   p<-ncol(cluster$Clust.desc)

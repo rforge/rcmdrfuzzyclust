@@ -40,6 +40,10 @@
 #' @export
 #' @import MASS
 #' @importFrom stats cov runif
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' data(iris)
+#' fuzzy.GK(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234,gamma=0)->cl
 fuzzy.GK<-function(X,K=2,m=1.5,max.iteration=100,
                          threshold=10^-5,RandomNumber=0,rho=rep(1,K),
                          gamma=0) {

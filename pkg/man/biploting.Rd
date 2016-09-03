@@ -18,4 +18,9 @@ Biploting Cluster Result
 \details{
 Make Visualization Biplot from cluster analysis result
 }
+\examples{
+library(RcmdrPlugin.FuzzyClust)
+fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+biploting(cl)
+}
 

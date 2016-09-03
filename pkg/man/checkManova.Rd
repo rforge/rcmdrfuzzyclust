@@ -15,4 +15,9 @@ statistic of MANOVA
 \description{
 MANOVA analysis based on Pillai Statistic
 }
+\examples{
+library(RcmdrPlugin.FuzzyClust)
+fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+checkManova(cl)
+}
 

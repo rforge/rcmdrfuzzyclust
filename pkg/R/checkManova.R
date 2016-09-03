@@ -4,6 +4,10 @@
 #' @return statistic of MANOVA
 #' @importFrom stats manova
 #' @export
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+#' checkManova(cl)
 
 checkManova<-function(clust){
   p<-ncol(clust$Clust.desc)

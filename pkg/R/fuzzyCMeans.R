@@ -34,6 +34,10 @@
 #' @export
 #'
 #' @importFrom stats runif
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' data(iris)
+#' fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
 fuzzy.CM<- function(X,K=2,m=2,max.iteration=100,threshold=10^-5,
                      RandomNumber=0) {
   ## Set data

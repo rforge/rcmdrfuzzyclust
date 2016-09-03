@@ -6,6 +6,11 @@
 #' @import reshape2
 #' @importFrom stats sd
 #' @export
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+#' checkManova(cl)
+
 radar.plotting<-function(cluster){
   pp <- ncol(cluster$Clust.desc)
   x.mean<- apply(cluster$Clust.desc[,1:(pp-1)],2,mean)

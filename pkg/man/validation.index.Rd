@@ -28,6 +28,11 @@ Xie Beni index calculated compactness and separation of clustering.
 
 The best cluster result can be decided with minimum value of index.
 }
+\examples{
+library(RcmdrPlugin.FuzzyClust)
+fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+validation.index(cl)
+}
 \references{
 Wang, W., & Zhang, Y. (2007). On Fuzzy Cluster Validity Indices. Fuzzy Sets and System, 2095-2117.
 }

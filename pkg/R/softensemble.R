@@ -36,6 +36,10 @@
 #' @import iterators
 #' @import parallel
 #' @importFrom stats cov
+#' @examples
+#' library(RcmdrPlugin.FuzzyClust)
+#' soft.vote.ensemble(iris[,1:4],seed=3,method="FCM",K=3,m=2,core=1)->Cl
+
 soft.vote.ensemble<-function(data,
                              seed,
                              method="FCM",

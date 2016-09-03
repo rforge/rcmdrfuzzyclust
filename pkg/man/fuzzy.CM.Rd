@@ -48,6 +48,11 @@ Centroid or cluster center can be use to interpret the cluster. Both membership 
 calculating mathematical distance. Fuzzy C-Means calculate distance with Euclideans norm. So it can be said that cluster
 will have sperichal shape of geometry.
 }
+\examples{
+library(RcmdrPlugin.FuzzyClust)
+data(iris)
+fuzzy.CM(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234)->cl
+}
 \references{
 Balasko, B., Abonyi, J., & Feil, B. (2002). Fuzzy Clustering and Data Analysis Toolbox: For Use with Matlab. Veszprem, Hungary.
 
