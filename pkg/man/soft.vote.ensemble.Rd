@@ -55,8 +55,8 @@ number of voting as partition. For fuzzy clustering, voting method use membershi
 For standarize the label, this function use hungary algorithm for optimal labelization.
 }
 \examples{
-library(RcmdrPlugin.FuzzyClust)
-soft.vote.ensemble(iris[,1:4],seed=3,method="FCM",K=3,m=2,core=1)->Cl
+#library(RcmdrPlugin.FuzzyClust)
+#soft.vote.ensemble(iris[1:50,1:4],seed=2,method="FCM",core=1,max.iteration=20,threshold=10^-3)->Cl
 }
 \references{
 Sevillano, X., Alias, F., & Socoro, J. C. (2013). Posisional and Confidence voting-based Consensus Function For Fuzzy Cluster Ensemble. Fuzzy Sets and System, 1-40.

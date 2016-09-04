@@ -60,7 +60,7 @@ the algorithm with decomposition of covariance so it will become non singular ma
 \examples{
 library(RcmdrPlugin.FuzzyClust)
 data(iris)
-fuzzy.GK(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234,gamma=0)->cl
+fuzzy.GK(X=iris[,1:4],K = 3,m = 2,RandomNumber = 1234,gamma=0, max.iteration=20)->cl
 }
 \references{
 Babuska, R., Veen, P. v., & Kaymak, U. (2002). Improved Covarians Estimation for Gustafson Kessel Clustering. IEEE, 1081-1084.

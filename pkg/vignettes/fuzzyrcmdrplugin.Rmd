@@ -68,10 +68,10 @@ checkManova(cl)
 
 Visualize your result with biplot and radar plot for easy interpretation your cluster result.
 
-```{r, echo=TRUE,fig.show='hold'}
+```{r, echo=TRUE,fig.show='hold',fig.width=12,fig.align='center',fig.height=12}
 biploting(cl) -> biplotcluster
 ```
 
-```{r, echo=TRUE,fig.show='hold'}
+```{r, echo=TRUE,fig.show='hold',fig.width=12,fig.align='center',fig.height=12}
 radar.plotting(cl) ->radarplot
 ```
